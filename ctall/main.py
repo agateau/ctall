@@ -11,6 +11,17 @@ from ctall.bonus import Bonus
 from ctall.player import Player
 from ctall.pool import Pool
 from ctall.wall import Wall
+from ctall.textdrawer import TextDrawer
+
+ALPHABET = \
+    " !*+,-./0" \
+    "123\"45678" \
+    "9:;<=#>?@" \
+    "ABCDEFG$H" \
+    "IJKLMNOPQ" \
+    "%RSTUVWXY" \
+    "2[&\\]^_`'" \
+    "(){|}~   "
 
 
 class Game(arcade.Window):
@@ -28,6 +39,9 @@ class Game(arcade.Window):
 
         self.wall_pool = Pool(lambda: Wall(self))
         self.bonus_pool = Pool(lambda: Bonus(self))
+
+        self.text_drawer = TextDrawer("./images/font.png", ALPHABET,
+                                      char_width=18, char_height=16, columns=9)
 
     def on_update(self, delta):
         self._world_update(delta)
@@ -58,6 +72,7 @@ class Game(arcade.Window):
         self.bonus_pool.sprite_list.draw()
         self.player_list.draw()
         self.wall_pool.sprite_list.draw()
+        self._draw_hud()
 
     def y_for_row(self, row):
         return SCREEN_HEIGHT / 2 + row * ROW_HEIGHT
@@ -65,6 +80,11 @@ class Game(arcade.Window):
     @property
     def scroll_speed(self):
         return START_SCROLL_SPEED
+
+    def _draw_hud(self):
+        distance = int(self.scroll_x / 100)
+        self.text_drawer.draw(f"D: {distance} S: {self.score}",
+                              0, SCREEN_HEIGHT - self.text_drawer.char_height)
 
     def _world_update(self, delta):
         old_scroll_x = self.scroll_x
