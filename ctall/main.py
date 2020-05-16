@@ -6,7 +6,8 @@ from collections import defaultdict
 import arcade
 
 from ctall.constants import ROW_HEIGHT, START_SCROLL_SPEED, SPAWN_X_SPACING, \
-    MIN_ROW, MAX_ROW, SCREEN_WIDTH, SCREEN_HEIGHT, SCROLL_SPEED_MULTIPLIER
+    MIN_ROW, MAX_ROW, SCREEN_WIDTH, SCREEN_HEIGHT, SCROLL_SPEED_MULTIPLIER, \
+    SCORE_X_ROUND, SCORE_PER_CAPTURE
 from ctall.bonus import Bonus
 from ctall.player import Player
 from ctall.pool import Pool
@@ -34,7 +35,7 @@ class Game(arcade.Window):
 
     def setup(self):
         self.scroll_x = 0.0
-        self.score = 0
+        self.captured_count = 0
         self.game_over = False
         self.scroll_speed = START_SCROLL_SPEED
         self.player = Player(self)
@@ -64,7 +65,7 @@ class Game(arcade.Window):
 
         for bonus in self.player.collides_with_list(
                 self.bonus_pool.sprite_list):
-            self.score += 1
+            self.captured_count += 1
             bonus.on_captured()
 
     def on_key_press(self, key, modifiers):
@@ -87,10 +88,13 @@ class Game(arcade.Window):
     def y_for_row(self, row):
         return SCREEN_HEIGHT / 2 + row * ROW_HEIGHT
 
+    @property
+    def score(self):
+        scroll_x = int(self.scroll_x / SCORE_X_ROUND) * SCORE_X_ROUND
+        return scroll_x + self.captured_count * SCORE_PER_CAPTURE
+
     def _draw_hud(self):
-        distance = int(self.scroll_x / 100)
-        self.text_drawer.draw(f"D: {distance}\nS: {self.score}",
-                              0, SCREEN_HEIGHT,
+        self.text_drawer.draw(f"SCORE: {self.score}", 0, SCREEN_HEIGHT,
                               align=TextDrawer.LEFT | TextDrawer.TOP)
 
     def _draw_gameover(self):
