@@ -1,5 +1,7 @@
 import arcade
 
+from ctall.constants import SCREEN_WIDTH
+
 
 class Wall(arcade.Sprite):
     def __init__(self, game):
@@ -10,7 +12,7 @@ class Wall(arcade.Sprite):
         self.pool = pool
 
     def setup(self, row):
-        self.start_x = self.game.scroll_x + self.game.width
+        self.start_x = self.game.scroll_x + SCREEN_WIDTH
         self._update_x_pos()
         self.center_y = self.game.y_for_row(row)
 

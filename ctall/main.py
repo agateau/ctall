@@ -6,7 +6,7 @@ from collections import defaultdict
 import arcade
 
 from ctall.constants import ROW_HEIGHT, START_SCROLL_SPEED, SPAWN_X_SPACING, \
-    MIN_ROW, MAX_ROW
+    MIN_ROW, MAX_ROW, SCREEN_WIDTH, SCREEN_HEIGHT
 from ctall.player import Player
 from ctall.pool import Pool
 from ctall.wall import Wall
@@ -14,7 +14,7 @@ from ctall.wall import Wall
 
 class Game(arcade.Window):
     def __init__(self):
-        super().__init__(720, 480, "Catch Them All")
+        super().__init__(SCREEN_WIDTH, SCREEN_HEIGHT, "Catch Them All")
         arcade.set_background_color(arcade.color.BLACK)
         self.keys = defaultdict(lambda: False)
 
@@ -49,7 +49,7 @@ class Game(arcade.Window):
         self.wall_pool.sprite_list.draw()
 
     def y_for_row(self, row):
-        return self.height / 2 + row * ROW_HEIGHT
+        return SCREEN_HEIGHT / 2 + row * ROW_HEIGHT
 
     @property
     def scroll_speed(self):
