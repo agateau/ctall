@@ -80,8 +80,9 @@ class Game(arcade.Window):
 
     def _draw_hud(self):
         distance = int(self.scroll_x / 100)
-        self.text_drawer.draw(f"D: {distance} S: {self.score}",
-                              0, SCREEN_HEIGHT - self.text_drawer.char_height)
+        self.text_drawer.draw(f"D: {distance}\nS: {self.score}",
+                              0, SCREEN_HEIGHT,
+                              align=TextDrawer.LEFT | TextDrawer.TOP)
 
     def _world_update(self, delta):
         old_scroll_x = self.scroll_x
