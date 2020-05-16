@@ -1,7 +1,5 @@
 import arcade
 
-SPRITE_SCALING = 1
-
 MIN_ROW = -2
 MAX_ROW = 2
 
@@ -11,7 +9,7 @@ MOVE_SPEED = 400
 
 class Player(arcade.Sprite):
     def __init__(self, game):
-        super().__init__("./images/player.png", SPRITE_SCALING)
+        super().__init__("./images/player.png")
         self.game = game
         self.current_row = 0
         self.target_row = 0
