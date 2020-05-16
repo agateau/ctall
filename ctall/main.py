@@ -23,11 +23,13 @@ ALPHABET = \
     "2[&\\]^_`'" \
     "(){|}~   "
 
+BG_COLOR = (60,) * 3
+
 
 class Game(arcade.Window):
     def __init__(self):
         super().__init__(SCREEN_WIDTH, SCREEN_HEIGHT, "Catch Them All")
-        arcade.set_background_color(arcade.color.BLACK)
+        arcade.set_background_color(BG_COLOR)
         self.keys = defaultdict(lambda: False)
 
     def setup(self):
