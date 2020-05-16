@@ -33,6 +33,7 @@ class Game(arcade.Window):
     def setup(self):
         self.scroll_x = 0.0
         self.score = 0
+        self.game_over = False
         self.scroll_speed = START_SCROLL_SPEED
         self.player = Player(self)
         self.player_list = arcade.SpriteList()
@@ -45,6 +46,8 @@ class Game(arcade.Window):
                                       char_width=18, char_height=16, columns=9)
 
     def on_update(self, delta):
+        if self.game_over:
+            return
         self._world_update(delta)
         self.player.update(delta)
         for obj in self.wall_pool.sprite_list:
@@ -55,7 +58,7 @@ class Game(arcade.Window):
         wall_hit_list = arcade.check_for_collision_with_list(
             self.player, self.wall_pool.sprite_list)
         if wall_hit_list:
-            sys.exit(0)
+            self.game_over = True
 
         for bonus in self.player.collides_with_list(
                 self.bonus_pool.sprite_list):
@@ -67,6 +70,8 @@ class Game(arcade.Window):
 
     def on_key_release(self, key, modifiers):
         self.keys[key] = False
+        if self.game_over and key == arcade.key.SPACE:
+            self.setup()
 
     def on_draw(self):
         arcade.start_render()
@@ -74,6 +79,8 @@ class Game(arcade.Window):
         self.player_list.draw()
         self.wall_pool.sprite_list.draw()
         self._draw_hud()
+        if self.game_over:
+            self._draw_gameover()
 
     def y_for_row(self, row):
         return SCREEN_HEIGHT / 2 + row * ROW_HEIGHT
@@ -83,6 +90,14 @@ class Game(arcade.Window):
         self.text_drawer.draw(f"D: {distance}\nS: {self.score}",
                               0, SCREEN_HEIGHT,
                               align=TextDrawer.LEFT | TextDrawer.TOP)
+
+    def _draw_gameover(self):
+        self.text_drawer.draw("GAME OVER\n\n",
+                              SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2,
+                              align=TextDrawer.HCENTER | TextDrawer.BOTTOM)
+        self.text_drawer.draw("PRESS SPACE TO RESTART",
+                              SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2,
+                              align=TextDrawer.HCENTER | TextDrawer.TOP)
 
     def _world_update(self, delta):
         old_scroll_x = self.scroll_x
