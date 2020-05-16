@@ -15,6 +15,8 @@ class Game(arcade.Window):
 
     def setup(self):
         self.player = Player(self)
+        self.player_list = arcade.SpriteList()
+        self.player_list.append(self.player)
 
     def on_update(self, delta):
         self.player.update(delta)
@@ -27,7 +29,7 @@ class Game(arcade.Window):
 
     def on_draw(self):
         arcade.start_render()
-        self.player.draw()
+        self.player_list.draw()
 
 
 def main():
