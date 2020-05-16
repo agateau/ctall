@@ -6,12 +6,18 @@ class Wall(arcade.Sprite):
         super().__init__("./images/wall.png")
         self.game = game
 
+    def set_pool(self, pool):
+        self.pool = pool
+
     def setup(self, row):
-        self.left = self.game.width
+        self.start_x = self.game.scroll_x + self.game.width
+        self._update_x_pos()
         self.center_y = self.game.y_for_row(row)
 
     def update(self, delta):
-        self.center_x -= self.game.scroll_speed * delta
-
+        self._update_x_pos()
         if self.right < 0:
-            self.setup(1)
+            self.pool.recycle(self)
+
+    def _update_x_pos(self):
+        self.left = self.start_x - self.game.scroll_x
