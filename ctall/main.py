@@ -6,7 +6,7 @@ from collections import defaultdict
 import arcade
 
 from ctall.constants import ROW_HEIGHT, START_SCROLL_SPEED, SPAWN_X_SPACING, \
-    MIN_ROW, MAX_ROW, SCREEN_WIDTH, SCREEN_HEIGHT
+    MIN_ROW, MAX_ROW, SCREEN_WIDTH, SCREEN_HEIGHT, SCROLL_SPEED_MULTIPLIER
 from ctall.bonus import Bonus
 from ctall.player import Player
 from ctall.pool import Pool
@@ -33,6 +33,7 @@ class Game(arcade.Window):
     def setup(self):
         self.scroll_x = 0.0
         self.score = 0
+        self.scroll_speed = START_SCROLL_SPEED
         self.player = Player(self)
         self.player_list = arcade.SpriteList()
         self.player_list.append(self.player)
@@ -77,10 +78,6 @@ class Game(arcade.Window):
     def y_for_row(self, row):
         return SCREEN_HEIGHT / 2 + row * ROW_HEIGHT
 
-    @property
-    def scroll_speed(self):
-        return START_SCROLL_SPEED
-
     def _draw_hud(self):
         distance = int(self.scroll_x / 100)
         self.text_drawer.draw(f"D: {distance} S: {self.score}",
@@ -106,6 +103,8 @@ class Game(arcade.Window):
             while bonus_row == wall_row:
                 bonus_row = random.randint(MIN_ROW, MAX_ROW)
             bonus.setup(bonus_row)
+
+        self.scroll_speed *= SCROLL_SPEED_MULTIPLIER
 
 
 def main():
