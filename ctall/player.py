@@ -1,9 +1,7 @@
 import arcade
 
-MIN_ROW = -2
-MAX_ROW = 2
+from ctall.constants import MIN_ROW, MAX_ROW
 
-ROW_HEIGHT = 48
 MOVE_SPEED = 400
 
 
@@ -14,7 +12,7 @@ class Player(arcade.Sprite):
         self.current_row = 0
         self.target_row = 0
         self.left = 12
-        self.center_y = self.y_for_row(self.current_row)
+        self.center_y = game.y_for_row(self.current_row)
 
     def update(self, delta):
         keys = self.game.keys
@@ -26,7 +24,7 @@ class Player(arcade.Sprite):
                 and self.target_row == self.current_row:
             self.target_row -= 1
 
-        target_y = self.y_for_row(self.target_row)
+        target_y = self.game.y_for_row(self.target_row)
         if self.target_row < self.current_row:
             self.center_y = max(target_y, self.center_y - MOVE_SPEED * delta)
         elif self.target_row > self.current_row:
@@ -34,6 +32,3 @@ class Player(arcade.Sprite):
 
         if self.center_y == target_y:
             self.current_row = self.target_row
-
-    def y_for_row(self, row):
-        return self.game.height / 2 + row * ROW_HEIGHT
