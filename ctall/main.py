@@ -8,6 +8,7 @@ import arcade
 from ctall.constants import ROW_HEIGHT, START_SCROLL_SPEED, SPAWN_X_SPACING, \
     MIN_ROW, MAX_ROW, SCREEN_WIDTH, SCREEN_HEIGHT, SCROLL_SPEED_MULTIPLIER, \
     SCORE_X_ROUND, SCORE_PER_CAPTURE
+from ctall.background import Background
 from ctall.bonus import Bonus
 from ctall.player import Player
 from ctall.pool import Pool
@@ -49,6 +50,7 @@ class GameWindow(arcade.Window):
 
     def on_draw(self):
         arcade.start_render()
+        self.game.background.draw()
         self.game.bonus_pool.sprite_list.draw()
         self.game.player_list.draw()
         self.game.wall_pool.sprite_list.draw()
@@ -83,6 +85,7 @@ class Game:
         self.gameover = False
         self.scroll_speed = START_SCROLL_SPEED
         self.player = Player(self)
+        self.background = Background(self)
         self.player_list = arcade.SpriteList()
         self.player_list.append(self.player)
 
@@ -96,6 +99,7 @@ class Game:
             return
 
         self._world_update(delta)
+        self.background.update()
         self.player.update(delta)
         for obj in self.wall_pool.sprite_list:
             obj.update(delta)
