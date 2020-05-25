@@ -11,9 +11,9 @@ public:
     Scroller(Listener& listener) : mListener(listener) {
     }
 
-    void update(sf::Time delta) {
+    void update(float delta) {
         float oldPos = mPos;
-        mPos += mScrollSpeed * delta.asSeconds();
+        mPos += mScrollSpeed * delta;
         if (int(mPos) % SPAWN_SPACING < int(oldPos) % SPAWN_SPACING) {
             mListener.spawnThings();
             accelerate();

@@ -1,18 +1,18 @@
 #ifndef ASSETS_H
 #define ASSETS_H
 
-#include <SFML/Graphics.hpp>
+#include "MySDLUtils.h"
 
 struct Assets {
-    Assets();
+    Assets(SDL_Renderer* renderer);
 
-    sf::Texture player;
-    sf::Texture wall;
+    Texture player;
+    Texture wall;
 
 private:
     std::string mBaseDir;
 
-    sf::Texture load(const std::string& name);
+    SDL_Texture* load(SDL_Renderer* renderer, const std::string& name);
 };
 
 #endif // ASSETS_H

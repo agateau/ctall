@@ -6,9 +6,10 @@
 #include "Pool.h"
 #include "Wall.h"
 
-#include <SFML/Audio.hpp>
-#include <SFML/Graphics.hpp>
-#include <SFML/System.hpp>
+#include "MySDLUtils.h"
+
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
 
 #include <cassert>
 #include <chrono>
@@ -25,35 +26,42 @@ static int FPS = 60;
 
 static float PX_PER_SEC = 90;
 
+struct Input {
+    bool up = false;
+    bool down = false;
+};
+
 class Player : public GameObject {
 public:
-    Player(const sf::Texture& texture) {
-        mSprite.setTexture(texture);
-        mSprite.setPosition(12, SCREEN_HEIGHT / 2);
+    Player(SDL_Texture* texture, const Input& input)
+        : mTexture(texture), mInput(input), mPos{12, SCREEN_HEIGHT / 2} {
     }
 
-    void update(sf::Time delta) override {
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
-            mSprite.move(0, -PX_PER_SEC * delta.asSeconds());
-        } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
-            mSprite.move(0, PX_PER_SEC * delta.asSeconds());
+    void update(float delta) override {
+        if (mInput.up) {
+            mPos.y -= PX_PER_SEC * delta;
+        } else if (mInput.down) {
+            mPos.y += PX_PER_SEC * delta;
         }
     }
 
-    void draw(sf::RenderTarget& target) override {
-        target.draw(mSprite);
+    void draw(const Renderer& renderer) override {
+        renderer.renderTexture(mTexture, mPos.x, mPos.y);
     }
 
 private:
-    sf::Sprite mSprite;
+    SDL_Texture* mTexture;
+    const Input& mInput;
+    SDL_Point mPos;
 };
 
 class Game : public Scroller::Listener {
 public:
-    Game()
-        : mPlayer(mAssets.player)
+    Game(SDL_Renderer* renderer)
+        : mAssets(renderer)
+        , mPlayer(mAssets.player.get(), mInput)
         , mScroller(*this)
-        , mWallPool([this]() { return new Wall(mWallPool, mScroller, mAssets.wall); })
+        , mWallPool([this]() { return new Wall(mWallPool, mScroller, mAssets.wall.get()); })
     {
     }
 
@@ -65,7 +73,7 @@ public:
         }
     }
 
-    void update(sf::Time delta) {
+    void update(float delta) {
         mPlayer.update(delta);
         mScroller.update(delta);
         for (auto* item : mWallPool.getActiveItems()) {
@@ -73,71 +81,137 @@ public:
         }
     }
 
-    void draw(sf::RenderWindow& window) {
-        window.clear();
-        mPlayer.draw(window);
+    void draw(Renderer& renderer) {
+        SDL_RenderClear(renderer.get());
+        mPlayer.draw(renderer);
         for (auto* item : mWallPool.getActiveItems()) {
-            item->draw(window);
+            item->draw(renderer);
+        }
+        SDL_RenderPresent(renderer.get());
+    }
+
+    void onKeyDown(const SDL_KeyboardEvent& event) {
+        if (event.keysym.sym == SDLK_UP) {
+            mInput.up = true;
+        } else if (event.keysym.sym == SDLK_DOWN) {
+            mInput.down = true;
+        }
+    }
+
+    void onKeyUp(const SDL_KeyboardEvent& event) {
+        if (event.keysym.sym == SDLK_UP) {
+            mInput.up = false;
+        } else if (event.keysym.sym == SDLK_DOWN) {
+            mInput.down = false;
         }
     }
 
 private:
     Assets mAssets;
+    Input mInput;
     Player mPlayer;
     Pool<Wall> mWallPool;
     Scroller mScroller;
 };
 
+class App {
+public:
+    App() : mOk(SDL_Init(SDL_INIT_VIDEO) == 0) {
+        if (!mOk) {
+            std::cerr << "SDL_Init Error: " << SDL_GetError() << std::endl;
+        }
+    }
+
+    ~App() {
+        if (mOk) {
+            SDL_Quit();
+        }
+    }
+
+    bool ok() const {
+        return mOk;
+    }
+
+private:
+    bool mOk;
+};
+
+
+inline std::chrono::time_point<std::chrono::steady_clock> now() {
+    return std::chrono::steady_clock::now();
+}
+
+
 int main(int argc, char** argv) {
     bool useFramerateLimit = argc == 2 && std::string(argv[1]) == "--ufl";
     std::cout << "useFramerateLimit=" << useFramerateLimit << '\n';
 
-    sf::RenderWindow window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Catch Them All");
-
-    if (useFramerateLimit) {
-        window.setFramerateLimit(FPS);
+    App app;
+    if (!app.ok()) {
+        return EXIT_FAILURE;
     }
 
-    Game game;
+    Window window{SDL_CreateWindow(
+            "SDL2Test",
+            SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
+            SCREEN_WIDTH, SCREEN_HEIGHT,
+            SDL_WINDOW_SHOWN)};
+    if (!window) {
+        return EXIT_FAILURE;
+    }
 
-    sf::Clock clock;
+    Renderer renderer{SDL_CreateRenderer(window.get(), -1,
+        SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC)};
+    if (!renderer) {
+        std::cerr << "Failed to create renderer " << SDL_GetError() << "\n";
+        return EXIT_FAILURE;
+    }
 
-    auto loopStep = [&window, &game](sf::Time delta) {
-        sf::Event event;
-        while (window.pollEvent(event)) {
-            // Close window: exit
-            if (event.type == sf::Event::Closed) {
-                window.close();
+    Game game(renderer.get());
+
+    auto loopStep = [&renderer, &game](float delta) {
+        SDL_Event event;
+        while (SDL_PollEvent(&event)) {
+            if (event.type == SDL_QUIT) {
+                return false;
+            } else if (event.type == SDL_KEYDOWN) {
+                if (event.key.keysym.sym == SDLK_ESCAPE) {
+                    return false;
+                }
+                game.onKeyDown(event.key);
+            } else if (event.type == SDL_KEYUP) {
+                game.onKeyUp(event.key);
             }
         }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
-            window.close();
-        }
         game.update(delta);
-        game.draw(window);
-        window.display();
+        game.draw(renderer);
+        return true;
     };
 
+    float delta = 1.0 / FPS;
     if (useFramerateLimit) {
-        while (window.isOpen()) {
-            loopStep(clock.restart());
+        while (true) {
+            if (!loopStep(delta)) {
+                break;
+            }
         }
     } else {
-        sf::Time delta = sf::seconds(1.0/FPS);
-        sf::Time nextTime = clock.getElapsedTime();
-        while (window.isOpen()) {
-            sf::Time currentTime = clock.getElapsedTime();
+        auto nextTime = now();
+        while (true) {
+            auto currentTime = now();
             if (currentTime >= nextTime) {
-                nextTime += delta;
-                loopStep(delta);
+                nextTime += std::chrono::microseconds(int(1000 * delta));
+                if (!loopStep(delta)) {
+                    break;
+                }
             } else {
-                auto sleepTime = nextTime - currentTime;
-                std::chrono::milliseconds ms(sleepTime.asMilliseconds());
-                if (ms > std::chrono::milliseconds(0)) {
-                    std::this_thread::sleep_for(ms);
+                auto duration = nextTime - currentTime;
+                if (duration > std::chrono::microseconds(0)) {
+                    std::this_thread::sleep_for(duration);
                 }
             }
         }
     }
+
     return EXIT_SUCCESS;
 }

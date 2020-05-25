@@ -1,13 +1,13 @@
 #ifndef GAMEOBJECT_H
 #define GAMEOBJECT_H
 
-#include <SFML/Graphics.hpp>
+class Renderer;
 
 class GameObject {
 public:
     virtual ~GameObject();
-    virtual void update(sf::Time elapsed) = 0;
-    virtual void draw(sf::RenderTarget& target) = 0;
+    virtual void update(float elapsed) = 0;
+    virtual void draw(const Renderer& renderer) = 0;
 };
 
 

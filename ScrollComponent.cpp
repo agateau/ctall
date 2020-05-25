@@ -2,9 +2,9 @@
 #include "ScrollComponent.h"
 #include "Scroller.h"
 
-ScrollComponent::ScrollComponent(const Scroller& scroller, sf::Sprite& sprite)
+ScrollComponent::ScrollComponent(const Scroller& scroller, SDL_Point& point)
     : mScroller(scroller)
-    , mSprite(sprite)
+    , mPoint(point)
 {}
 
 void ScrollComponent::setup() {
@@ -12,7 +12,5 @@ void ScrollComponent::setup() {
 }
 
 void ScrollComponent::update() {
-    auto pos = mSprite.getPosition();
-    pos.x = mStartX - mScroller.getPosition();
-    mSprite.setPosition(pos);
+    mPoint.x = mStartX - mScroller.getPosition();
 }

@@ -6,32 +6,34 @@
 
 class Wall : public GameObject {
 public:
-    Wall(Pool<Wall>& pool, const Scroller& scroller, const sf::Texture& texture)
-        : mPool(pool), mScrollComponent(scroller, mSprite)
+    Wall(Pool<Wall>& pool, const Scroller& scroller, SDL_Texture* texture)
+        : mPool(pool), mTexture(texture), mScrollComponent(scroller, mPos)
     {
-        mSprite.setTexture(texture);
     }
 
     void setup(int row) {
-        mSprite.setPosition({SCREEN_WIDTH, SCREEN_HEIGHT / 2 + row * ROW_HEIGHT});
+        mPos.x = SCREEN_WIDTH;
+        mPos.y = SCREEN_HEIGHT / 2 + row * ROW_HEIGHT;
         mScrollComponent.setup();
     }
 
-    void update(sf::Time delta) override {
+    void update(float delta) override {
         mScrollComponent.update();
-        if (mSprite.getPosition().x + ROW_HEIGHT < 0) {
+        if (mPos.x + ROW_HEIGHT < 0) {
             mPool.recycle(this);
         }
     }
 
-    void draw(sf::RenderTarget& target) override {
-        target.draw(mSprite);
+    void draw(const Renderer& renderer) override {
+        renderer.renderTexture(mTexture, mPos.x, mPos.y);
     }
 
 private:
-    sf::Sprite mSprite;
     Pool<Wall>& mPool;
+    SDL_Texture* const mTexture;
     ScrollComponent mScrollComponent;
+
+    SDL_Point mPos;
 };
 
 #endif /* WALL_H */

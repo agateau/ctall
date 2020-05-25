@@ -2,16 +2,15 @@
 
 #include <cassert>
 
-Assets::Assets() {
+Assets::Assets(SDL_Renderer* renderer) {
     mBaseDir = "images";
-    player = load("player");
-    wall = load("wall");
+    player.reset(load(renderer, "player"));
+    wall.reset(load(renderer, "wall"));
 }
 
-sf::Texture Assets::load(const std::string& name) {
+SDL_Texture* Assets::load(SDL_Renderer* renderer, const std::string& name) {
     auto path = mBaseDir + "/" + name + ".png";
-    sf::Texture texture;
-    bool ok = texture.loadFromFile(path);
-    assert(ok);
+    auto texture = loadTexture(renderer, path);
+    assert(texture);
     return texture;
 }
