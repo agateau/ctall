@@ -12,6 +12,7 @@ add_subdirectory(third-party/libSDL2pp)
 add_executable(ctall-sdl2
     Assets.cpp
     main.cpp
+    Game.cpp
     GameObject.cpp
     Player.cpp
     Pool.cpp

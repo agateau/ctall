@@ -2,7 +2,11 @@
 #include "ScrollComponent.h"
 #include "Scroller.h"
 
-ScrollComponent::ScrollComponent(const Scroller& scroller, SDL_Point& point)
+#include <SDL2pp/SDL2pp.hh>
+
+using namespace SDL2pp;
+
+ScrollComponent::ScrollComponent(const Scroller& scroller, Point& point)
     : mScroller(scroller)
     , mPoint(point)
 {}
