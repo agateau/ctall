@@ -1,20 +1,17 @@
-#include "constants.h"
 #include "ScrollComponent.h"
+
+#include "GameObject.h"
 #include "Scroller.h"
+#include "constants.h"
 
-#include <SDL2pp/SDL2pp.hh>
-
-using namespace SDL2pp;
-
-ScrollComponent::ScrollComponent(const Scroller& scroller, Point& point)
-    : mScroller(scroller)
-    , mPoint(point)
-{}
+ScrollComponent::ScrollComponent(const Scroller& scroller, GameObject& gameObject)
+        : mScroller(scroller), mGameObject(gameObject) {
+}
 
 void ScrollComponent::setup() {
-    mStartX = mScroller.getPosition() + SCREEN_WIDTH;
+    mStartX = int(mScroller.getPosition()) + SCREEN_WIDTH;
 }
 
 void ScrollComponent::update() {
-    mPoint.x = mStartX - mScroller.getPosition();
+    mGameObject.rect().x = mStartX - int(mScroller.getPosition());
 }

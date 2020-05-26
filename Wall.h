@@ -25,9 +25,6 @@ private:
     Pool<Wall>& mPool;
     SDL2pp::Texture& mTexture;
     ScrollComponent mScrollComponent;
-    int mHeight;
-
-    SDL2pp::Point mPos;
 };
 
 #endif /* WALL_H */

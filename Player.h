@@ -20,8 +20,6 @@ private:
     Game& mGame;
     SDL2pp::Texture& mTexture;
     const Input& mInput;
-    SDL2pp::Point mPos;
-    int mHeight;
     int mCurrentLane = 0;
     int mTargetLane = 0;
 };

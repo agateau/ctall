@@ -1,22 +1,19 @@
 #ifndef SCROLLCOMPONENT_H
 #define SCROLLCOMPONENT_H
 
-namespace SDL2pp {
-class Point;
-}
-
+class GameObject;
 class Scroller;
 
 class ScrollComponent {
 public:
-    ScrollComponent(const Scroller& scroller, SDL2pp::Point& point);
+    ScrollComponent(const Scroller& scroller, GameObject& gameObject);
     void setup();
     void update();
 
 private:
     const Scroller& mScroller;
-    SDL2pp::Point& mPoint;
-    float mStartX = 0;
+    GameObject& mGameObject;
+    int mStartX = 0;
 };
 
 #endif /* SCROLLCOMPONENT_H */
