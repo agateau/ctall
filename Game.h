@@ -31,11 +31,17 @@ public:
     int yForLane(int lane) const;
 
 private:
+    enum class State {
+        Running,
+        GameOver
+    };
+
     Assets mAssets;
     Input mInput;
     Player mPlayer;
     Scroller mScroller;
     Pool<Wall> mWallPool;
+    State mState = State::Running;
 };
 
 #endif // GAME_H

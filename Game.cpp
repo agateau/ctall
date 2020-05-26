@@ -32,11 +32,28 @@ void Game::spawnThings() {
     }
 }
 
+template <typename Iterator>
+static bool collide(const GameObject& object, Iterator first, Iterator last) {
+    auto rect = object.rect();
+    auto hit = std::find_if(first, last, [&rect](GameObject* other) {
+        return rect.Intersects(other->rect());
+    });
+    return hit != last;
+}
+
 void Game::update(float delta) {
+    if (mState != State::Running) {
+        return;
+    }
     mPlayer.update(delta);
     mScroller.update(delta);
     for (auto* item : mWallPool.getActiveItems()) {
         item->update(delta);
+    }
+
+    auto activeItems = mWallPool.getActiveItems();
+    if (collide(mPlayer, activeItems.cbegin(), activeItems.cend())) {
+        mState = State::GameOver;
     }
 }
 
