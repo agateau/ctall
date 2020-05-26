@@ -27,8 +27,8 @@ Game::~Game() {
 void Game::spawnThings() {
     if (randint(0, 1) == 0) {
         auto wall = mWallPool.get();
-        int row = randint(MIN_LANE, MAX_LANE);
-        wall->setup(row);
+        int lane = randint(MIN_LANE, MAX_LANE);
+        wall->setup(lane);
     }
 }
 

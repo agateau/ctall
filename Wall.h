@@ -14,7 +14,7 @@ class Wall : public GameObject {
 public:
     Wall(Game& game, Pool<Wall>& pool, const Scroller& scroller, SDL2pp::Texture& texture);
 
-    void setup(int row);
+    void setup(int lane);
 
     void update(float delta) override;
 

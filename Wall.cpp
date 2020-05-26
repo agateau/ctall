@@ -13,9 +13,9 @@ Wall::Wall(Game& game, Pool<Wall>& pool, const Scroller& scroller, Texture& text
     mRect = Rect{{0, 0}, mTexture.GetSize()};
 }
 
-void Wall::setup(int row) {
+void Wall::setup(int lane) {
     mRect.x = SCREEN_WIDTH;
-    mRect.y = mGame.yForLane(row) - mRect.h / 2;
+    mRect.y = mGame.yForLane(lane) - mRect.h / 2;
     mScrollComponent.setup();
 }
 
