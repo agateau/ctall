@@ -90,7 +90,7 @@ public:
         renderer.Present();
     }
 
-    void onKeyDown(const SDL_KeyboardEvent& event) {
+    void onKeyPressed(const SDL_KeyboardEvent& event) {
         if (event.keysym.sym == SDLK_UP) {
             mInput.up = true;
         } else if (event.keysym.sym == SDLK_DOWN) {
@@ -98,7 +98,7 @@ public:
         }
     }
 
-    void onKeyUp(const SDL_KeyboardEvent& event) {
+    void onKeyReleased(const SDL_KeyboardEvent& event) {
         if (event.keysym.sym == SDLK_UP) {
             mInput.up = false;
         } else if (event.keysym.sym == SDLK_DOWN) {
@@ -144,9 +144,9 @@ int main(int argc, char** argv) {
                 if (event.key.keysym.sym == SDLK_ESCAPE) {
                     return false;
                 }
-                game.onKeyDown(event.key);
+                game.onKeyPressed(event.key);
             } else if (event.type == SDL_KEYUP) {
-                game.onKeyUp(event.key);
+                game.onKeyReleased(event.key);
             }
         }
         game.update(delta);
