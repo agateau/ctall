@@ -4,9 +4,11 @@
 #include "GameObject.h"
 #include "ScrollComponent.h"
 
+#include <SDL2pp/SDL2pp.hh>
+
 class Wall : public GameObject {
 public:
-    Wall(Pool<Wall>& pool, const Scroller& scroller, SDL_Texture* texture)
+    Wall(Pool<Wall>& pool, const Scroller& scroller, SDL2pp::Texture& texture)
         : mPool(pool), mTexture(texture), mScrollComponent(scroller, mPos)
     {
     }
@@ -24,16 +26,16 @@ public:
         }
     }
 
-    void draw(const Renderer& renderer) override {
-        renderer.renderTexture(mTexture, mPos.x, mPos.y);
+    void draw(SDL2pp::Renderer& renderer) override {
+        renderer.Copy(mTexture, SDL2pp::NullOpt, mPos);
     }
 
 private:
     Pool<Wall>& mPool;
-    SDL_Texture* const mTexture;
+    SDL2pp::Texture& mTexture;
     ScrollComponent mScrollComponent;
 
-    SDL_Point mPos;
+    SDL2pp::Point mPos;
 };
 
 #endif /* WALL_H */

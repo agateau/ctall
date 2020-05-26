@@ -1,16 +1,19 @@
 #include "Assets.h"
 
+#include <SDL2pp/SDL2pp.hh>
+
 #include <cassert>
 
-Assets::Assets(SDL_Renderer* renderer) {
-    mBaseDir = "images";
-    player.reset(load(renderer, "player"));
-    wall.reset(load(renderer, "wall"));
+using namespace SDL2pp;
+
+Assets::Assets(Renderer& renderer)
+    : mBaseDir("images")
+    , player(load(renderer, "player"))
+    , wall(load(renderer, "wall"))
+{
 }
 
-SDL_Texture* Assets::load(SDL_Renderer* renderer, const std::string& name) {
+Texture Assets::load(Renderer& renderer, const std::string& name) {
     auto path = mBaseDir + "/" + name + ".png";
-    auto texture = loadTexture(renderer, path);
-    assert(texture);
-    return texture;
+    return Texture(renderer, path);
 }

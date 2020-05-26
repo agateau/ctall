@@ -6,16 +6,15 @@
 #include "Pool.h"
 #include "Wall.h"
 
-#include "MySDLUtils.h"
-
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
+#include <SDL2pp/SDL2pp.hh>
 
 #include <cassert>
 #include <chrono>
 #include <cstdlib>
 #include <iostream>
 #include <thread>
+
+using namespace SDL2pp;
 
 static int randint(int min, int max) {
     int random = std::rand();
@@ -33,35 +32,36 @@ struct Input {
 
 class Player : public GameObject {
 public:
-    Player(SDL_Texture* texture, const Input& input)
+    Player(Texture& texture, const Input& input)
         : mTexture(texture), mInput(input), mPos{12, SCREEN_HEIGHT / 2} {
     }
 
     void update(float delta) override {
         if (mInput.up) {
             mPos.y -= PX_PER_SEC * delta;
-        } else if (mInput.down) {
+        }
+        if (mInput.down) {
             mPos.y += PX_PER_SEC * delta;
         }
     }
 
-    void draw(const Renderer& renderer) override {
-        renderer.renderTexture(mTexture, mPos.x, mPos.y);
+    void draw(Renderer& renderer) override {
+        renderer.Copy(mTexture, NullOpt, mPos);
     }
 
 private:
-    SDL_Texture* mTexture;
+    Texture& mTexture;
     const Input& mInput;
-    SDL_Point mPos;
+    Point mPos;
 };
 
 class Game : public Scroller::Listener {
 public:
-    Game(SDL_Renderer* renderer)
+    Game(Renderer& renderer)
         : mAssets(renderer)
-        , mPlayer(mAssets.player.get(), mInput)
+        , mPlayer(mAssets.player, mInput)
         , mScroller(*this)
-        , mWallPool([this]() { return new Wall(mWallPool, mScroller, mAssets.wall.get()); })
+        , mWallPool([this]() { return new Wall(mWallPool, mScroller, mAssets.wall); })
     {
     }
 
@@ -82,12 +82,12 @@ public:
     }
 
     void draw(Renderer& renderer) {
-        SDL_RenderClear(renderer.get());
+        renderer.Clear();
         mPlayer.draw(renderer);
         for (auto* item : mWallPool.getActiveItems()) {
             item->draw(renderer);
         }
-        SDL_RenderPresent(renderer.get());
+        renderer.Present();
     }
 
     void onKeyDown(const SDL_KeyboardEvent& event) {
@@ -110,64 +110,30 @@ private:
     Assets mAssets;
     Input mInput;
     Player mPlayer;
-    Pool<Wall> mWallPool;
     Scroller mScroller;
+    Pool<Wall> mWallPool;
 };
-
-class App {
-public:
-    App() : mOk(SDL_Init(SDL_INIT_VIDEO) == 0) {
-        if (!mOk) {
-            std::cerr << "SDL_Init Error: " << SDL_GetError() << std::endl;
-        }
-    }
-
-    ~App() {
-        if (mOk) {
-            SDL_Quit();
-        }
-    }
-
-    bool ok() const {
-        return mOk;
-    }
-
-private:
-    bool mOk;
-};
-
 
 inline std::chrono::time_point<std::chrono::steady_clock> now() {
     return std::chrono::steady_clock::now();
 }
 
-
 int main(int argc, char** argv) {
     bool useFramerateLimit = argc == 2 && std::string(argv[1]) == "--ufl";
     std::cout << "useFramerateLimit=" << useFramerateLimit << '\n';
 
-    App app;
-    if (!app.ok()) {
-        return EXIT_FAILURE;
-    }
+    SDL sdl(SDL_INIT_VIDEO);
 
-    Window window{SDL_CreateWindow(
+    Window window{
             "SDL2Test",
             SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
             SCREEN_WIDTH, SCREEN_HEIGHT,
-            SDL_WINDOW_SHOWN)};
-    if (!window) {
-        return EXIT_FAILURE;
-    }
+            SDL_WINDOW_SHOWN};
 
-    Renderer renderer{SDL_CreateRenderer(window.get(), -1,
-        SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC)};
-    if (!renderer) {
-        std::cerr << "Failed to create renderer " << SDL_GetError() << "\n";
-        return EXIT_FAILURE;
-    }
+    Renderer renderer{window, -1,
+        SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC};
 
-    Game game(renderer.get());
+    Game game(renderer);
 
     auto loopStep = [&renderer, &game](float delta) {
         SDL_Event event;

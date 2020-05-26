@@ -1,18 +1,20 @@
 #ifndef ASSETS_H
 #define ASSETS_H
 
-#include "MySDLUtils.h"
+#include <SDL2pp/SDL2pp.hh>
 
 struct Assets {
-    Assets(SDL_Renderer* renderer);
-
-    Texture player;
-    Texture wall;
-
 private:
     std::string mBaseDir;
 
-    SDL_Texture* load(SDL_Renderer* renderer, const std::string& name);
+public:
+    Assets(SDL2pp::Renderer& renderer);
+
+    SDL2pp::Texture player;
+    SDL2pp::Texture wall;
+
+private:
+    SDL2pp::Texture load(SDL2pp::Renderer& renderer, const std::string& name);
 };
 
 #endif // ASSETS_H
