@@ -6,29 +6,18 @@
 
 #include <SDL2pp/SDL2pp.hh>
 
+template<class T>
+class Pool;
+
 class Wall : public GameObject {
 public:
-    Wall(Pool<Wall>& pool, const Scroller& scroller, SDL2pp::Texture& texture)
-        : mPool(pool), mTexture(texture), mScrollComponent(scroller, mPos)
-    {
-    }
+    Wall(Pool<Wall>& pool, const Scroller& scroller, SDL2pp::Texture& texture);
 
-    void setup(int row) {
-        mPos.x = SCREEN_WIDTH;
-        mPos.y = SCREEN_HEIGHT / 2 + row * ROW_HEIGHT;
-        mScrollComponent.setup();
-    }
+    void setup(int row);
 
-    void update(float delta) override {
-        mScrollComponent.update();
-        if (mPos.x + ROW_HEIGHT < 0) {
-            mPool.recycle(this);
-        }
-    }
+    void update(float delta) override;
 
-    void draw(SDL2pp::Renderer& renderer) override {
-        renderer.Copy(mTexture, SDL2pp::NullOpt, mPos);
-    }
+    void draw(SDL2pp::Renderer& renderer) override;
 
 private:
     Pool<Wall>& mPool;

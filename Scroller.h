@@ -1,33 +1,24 @@
 #ifndef SCROLLER_H
 #define SCROLLER_H
 
+#include "constants.h"
+
 class Scroller {
 public:
     class Listener {
     public:
+        virtual ~Listener();
         virtual void spawnThings() = 0;
     };
 
-    Scroller(Listener& listener) : mListener(listener) {
-    }
+    Scroller(Listener& listener);
 
-    void update(float delta) {
-        float oldPos = mPos;
-        mPos += mScrollSpeed * delta;
-        if (int(mPos) % SPAWN_SPACING < int(oldPos) % SPAWN_SPACING) {
-            mListener.spawnThings();
-            accelerate();
-        }
-    }
+    void update(float delta);
 
-    float getPosition() const {
-        return mPos;
-    }
+    float getPosition() const;
 
 private:
-    void accelerate() {
-        mScrollSpeed *= SCROLL_SPEED_MULTIPLIER;
-    }
+    void accelerate();
 
     Listener& mListener;
     float mPos = 0;
