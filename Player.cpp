@@ -1,22 +1,37 @@
 #include "Player.h"
 
-#include "constants.h"
+#include "Game.h"
 #include "Input.h"
+#include "constants.h"
 
 using namespace SDL2pp;
 
-static constexpr float PX_PER_SEC = 90;
+static constexpr float MOVE_SPEED = 400;
 
-Player::Player(Texture& texture, const Input& input)
-    : mTexture(texture), mInput(input), mPos{12, SCREEN_HEIGHT / 2} {
+Player::Player(Game& game, Texture& texture, const Input& input)
+        : mGame(game), mTexture(texture), mInput(input) {
+    mHeight = mTexture.GetHeight();
+    mPos.x = 12;
+    mPos.y = mGame.yForLane(mCurrentLane) - mHeight / 2;
 }
 
 void Player::update(float delta) {
-    if (mInput.up) {
-        mPos.y -= PX_PER_SEC * delta;
+    if (mInput.down && mTargetLane < MAX_LANE && mTargetLane == mCurrentLane) {
+        ++mTargetLane;
     }
-    if (mInput.down) {
-        mPos.y += PX_PER_SEC * delta;
+    if (mInput.up && mTargetLane > MIN_LANE && mTargetLane == mCurrentLane) {
+        --mTargetLane;
+    }
+
+    int targetY = mGame.yForLane(mTargetLane) - mHeight / 2;
+
+    if (mTargetLane < mCurrentLane) {
+        mPos.y = std::max(targetY, mPos.y - int(MOVE_SPEED * delta));
+    } else if (mTargetLane > mCurrentLane) {
+        mPos.y = std::min(targetY, mPos.y + int(MOVE_SPEED * delta));
+    }
+    if (mPos.y == targetY) {
+        mCurrentLane = mTargetLane;
     }
 }
 

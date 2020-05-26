@@ -1,24 +1,25 @@
 #include "Wall.h"
 
-#include "constants.h"
-#include "Pool.h"
-
 #include <SDL2pp/SDL2pp.hh>
 
-Wall::Wall(Pool<Wall>& pool, const Scroller& scroller, SDL2pp::Texture& texture)
-    : mPool(pool), mTexture(texture), mScrollComponent(scroller, mPos)
-{
+#include "Game.h"
+#include "Pool.h"
+#include "constants.h"
+
+Wall::Wall(Game& game, Pool<Wall>& pool, const Scroller& scroller, SDL2pp::Texture& texture)
+        : mGame(game), mPool(pool), mTexture(texture), mScrollComponent(scroller, mPos) {
+    mHeight = mTexture.GetHeight();
 }
 
 void Wall::setup(int row) {
     mPos.x = SCREEN_WIDTH;
-    mPos.y = SCREEN_HEIGHT / 2 + row * ROW_HEIGHT;
+    mPos.y = mGame.yForLane(row) - mHeight / 2;
     mScrollComponent.setup();
 }
 
-void Wall::update(float delta) {
+void Wall::update(float /*delta*/) {
     mScrollComponent.update();
-    if (mPos.x + ROW_HEIGHT < 0) {
+    if (mPos.x + LANE_WIDTH < 0) {
         mPool.recycle(this);
     }
 }

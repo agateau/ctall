@@ -16,9 +16,9 @@ using namespace SDL2pp;
 
 Game::Game(Renderer& renderer)
         : mAssets(renderer)
-        , mPlayer(mAssets.player, mInput)
+        , mPlayer(*this, mAssets.player, mInput)
         , mScroller(*this)
-        , mWallPool([this]() { return new Wall(mWallPool, mScroller, mAssets.wall); }) {
+        , mWallPool([this]() { return new Wall(*this, mWallPool, mScroller, mAssets.wall); }) {
 }
 
 Game::~Game() {
@@ -27,7 +27,7 @@ Game::~Game() {
 void Game::spawnThings() {
     if (randint(0, 1) == 0) {
         auto wall = mWallPool.get();
-        int row = randint(MIN_ROW, MAX_ROW);
+        int row = randint(MIN_LANE, MAX_LANE);
         wall->setup(row);
     }
 }
@@ -63,4 +63,8 @@ void Game::onKeyReleased(const SDL_KeyboardEvent& event) {
     } else if (event.keysym.sym == SDLK_DOWN) {
         mInput.down = false;
     }
+}
+
+int Game::yForLane(int lane) const {
+    return SCREEN_HEIGHT / 2 + lane * LANE_WIDTH;
 }

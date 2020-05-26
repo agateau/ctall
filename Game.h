@@ -28,6 +28,8 @@ public:
 
     void onKeyReleased(const SDL_KeyboardEvent& event);
 
+    int yForLane(int lane) const;
+
 private:
     Assets mAssets;
     Input mInput;
