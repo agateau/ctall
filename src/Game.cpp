@@ -47,11 +47,11 @@ void Game::update(float delta) {
     }
     mPlayer.update(delta);
     mScroller.update(delta);
-    for (auto* item : mWallPool.getActiveItems()) {
+    for (auto* item : mWallPool.getActiveItemsSnapshot()) {
         item->update(delta);
     }
 
-    auto activeItems = mWallPool.getActiveItems();
+    auto activeItems = mWallPool.getActiveItemsSnapshot();
     if (collide(mPlayer, activeItems.cbegin(), activeItems.cend())) {
         mState = State::GameOver;
     }
@@ -60,7 +60,7 @@ void Game::update(float delta) {
 void Game::draw(Renderer& renderer) {
     renderer.Clear();
     mPlayer.draw(renderer);
-    for (auto* item : mWallPool.getActiveItems()) {
+    for (auto* item : mWallPool.getActiveItemsSnapshot()) {
         item->draw(renderer);
     }
     renderer.Present();

@@ -4,53 +4,64 @@
 #include <algorithm>
 #include <cassert>
 #include <functional>
-#include <set>
+#include <vector>
 
-#include <iostream>
-
-// FIXME: leak: items are never deleted
 template<class T>
 class Pool {
 public:
     using Creator = std::function<T*(void)>;
+    using Container = std::vector<T*>;
 
     Pool(const Creator& creator) : mCreator(creator) {
+    }
+
+    ~Pool() {
+        for(T* item : mItems) {
+            delete item;
+        }
     }
 
     T* get();
 
     void recycle(T* item);
 
-    std::set<T*> getActiveItems() const {
-        return mActiveItems;
+    Container getActiveItemsSnapshot() const {
+        mSnapshot.clear();
+        std::copy(mItems.begin(), mItems.begin() + mFirstFreeIdx, std::back_inserter(mSnapshot));
+        return mSnapshot;
     }
 
 private:
     Creator mCreator;
-    std::set<T*> mActiveItems;
-    std::set<T*> mRecycledItems;
+    Container mItems;
+    int mFirstFreeIdx = 0;
+    mutable Container mSnapshot;
 };
 
 template<class T>
 T* Pool<T>::get() {
     T* item = nullptr;
-    if (mRecycledItems.empty()) {
+    auto freeItemIt = mItems.begin() + mFirstFreeIdx;
+    if (freeItemIt == mItems.end()) {
         item = mCreator();
+        mItems.push_back(item);
     } else {
-        auto it = mRecycledItems.begin();
-        item = *it;
-        mRecycledItems.erase(it);
+        item = *freeItemIt;
     }
-    mActiveItems.insert(item);
+    ++mFirstFreeIdx;
     return item;
 }
 
 template<class T>
 void Pool<T>::recycle(T* item) {
-    auto it = std::find(mActiveItems.begin(), mActiveItems.end(), item);
-    assert(it != mActiveItems.end());
-    mActiveItems.erase(it);
-    mRecycledItems.insert(item);
+    auto freeItemIt = mItems.begin() + mFirstFreeIdx;
+    auto it = std::find(mItems.begin(), freeItemIt, item);
+    assert(it != freeItemIt);
+    auto lastUsedIt = freeItemIt - 1;
+    if (it != lastUsedIt) {
+        std::swap(*it, *lastUsedIt);
+    }
+    --mFirstFreeIdx;
 }
 
 #endif /* POOL_H */
