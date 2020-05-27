@@ -1,10 +1,7 @@
 #include <SDL2/SDL.h>
 
 #include <SDL2pp/SDL2pp.hh>
-#include <cassert>
 #include <chrono>
-#include <cstdlib>
-#include <iostream>
 #include <thread>
 
 #include "Game.h"
