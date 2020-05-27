@@ -18,13 +18,25 @@ Player::Player(Game& game, Texture& texture, const Input& input)
 }
 
 void Player::update(float delta) {
+    updateTargetLane();
+    updateY(delta);
+    checkCollisions();
+}
+
+void Player::draw(Renderer& renderer) {
+    renderer.Copy(mTexture, NullOpt, mRect);
+}
+
+void Player::updateTargetLane() {
     if (mInput.down && mTargetLane < MAX_LANE && mTargetLane == mCurrentLane) {
         ++mTargetLane;
     }
     if (mInput.up && mTargetLane > MIN_LANE && mTargetLane == mCurrentLane) {
         --mTargetLane;
     }
+}
 
+void Player::updateY(float delta) {
     int targetY = mGame.yForLane(mTargetLane) - mRect.h / 2;
 
     if (mTargetLane < mCurrentLane) {
@@ -37,6 +49,5 @@ void Player::update(float delta) {
     }
 }
 
-void Player::draw(Renderer& renderer) {
-    renderer.Copy(mTexture, NullOpt, mRect);
+void Player::checkCollisions() {
 }

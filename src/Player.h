@@ -17,6 +17,10 @@ public:
     void draw(SDL2pp::Renderer& renderer) override;
 
 private:
+    void updateTargetLane();
+    void updateY(float delta);
+    void checkCollisions();
+
     Game& mGame;
     SDL2pp::Texture& mTexture;
     const Input& mInput;
