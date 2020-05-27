@@ -2,6 +2,7 @@
 #define GAME_H
 
 #include <SDL2pp/SDL2pp.hh>
+#include <vector>
 
 #include "Assets.h"
 #include "Input.h"
@@ -30,17 +31,19 @@ public:
 
     int yForLane(int lane) const;
 
+    const std::vector<GameObject*>& activeGameObjects() const;
+
+    void switchToGameOverState();
+
 private:
-    enum class State {
-        Running,
-        GameOver
-    };
+    enum class State { Running, GameOver };
 
     Assets mAssets;
     Input mInput;
     Player mPlayer;
     Scroller mScroller;
     Pool<Wall> mWallPool;
+    std::vector<GameObject*> mGameObjects;
     State mState = State::Running;
 };
 

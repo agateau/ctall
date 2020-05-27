@@ -49,5 +49,25 @@ void Player::updateY(float delta) {
     }
 }
 
+template <typename Iterator>
+static bool collide(const GameObject& object, Iterator first, Iterator last) {
+    auto rect = object.rect();
+    auto hit = std::find_if(
+        first, last, [&rect](GameObject* other) { return rect.Intersects(other->rect()); });
+    return hit != last;
+}
+
+static bool collide(const GameObject* o1, const GameObject* o2) {
+    return o1->rect().Intersects(o2->rect());
+}
+
 void Player::checkCollisions() {
+    for (const auto* object : mGame.activeGameObjects()) {
+        if (object == this) {
+            continue;
+        }
+        if (collide(this, object)) {
+            mGame.switchToGameOverState();
+        }
+    }
 }

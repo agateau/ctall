@@ -17,8 +17,15 @@ public:
         return mRect;
     }
 
+    bool isActive() const;
+
 protected:
+    void setActive(bool active);
+
     SDL2pp::Rect mRect;
+
+private:
+    bool mActive = true;
 };
 
 
