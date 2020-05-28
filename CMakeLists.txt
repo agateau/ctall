@@ -7,5 +7,6 @@ endif()
 set(CMAKE_CXX_STANDARD 17)
 
 set(SDL2PP_WITH_IMAGE ON)
-add_subdirectory(third-party/libSDL2pp)
+add_subdirectory(third-party)
 add_subdirectory(src)
+add_subdirectory(tests)
