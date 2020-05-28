@@ -38,6 +38,8 @@ public:
 
 private:
     void drawGameOverOverlay(SDL2pp::Renderer& renderer);
+    void drawHud(SDL2pp::Renderer& renderer);
+    int score() const;
 
     enum class State { Running, GameOver };
 

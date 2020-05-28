@@ -13,6 +13,9 @@ static int randint(int min, int max) {
     return min + random % (max - min + 1);
 }
 
+static constexpr int SCORE_ROUND = 100;
+static constexpr int SCORE_PER_CAPTURE = 1000;
+
 using namespace SDL2pp;
 
 Game::Game(Renderer& renderer)
@@ -70,13 +73,24 @@ void Game::draw(Renderer& renderer) {
     for (auto* object : mGameObjects) {
         object->draw(renderer);
     }
+    drawHud(renderer);
     if (mState == State::GameOver) {
         drawGameOverOverlay(renderer);
     }
     renderer.Present();
 }
 
-void Game::drawGameOverOverlay(SDL2pp::Renderer& renderer) {
+void Game::drawHud(Renderer& renderer) {
+    auto msg = "SCORE: " + std::to_string(score());
+    mAssets.textDrawer.draw(renderer, msg, {0, 0});
+}
+
+int Game::score() const {
+    int distance = int(mScroller.getPosition() / SCORE_ROUND) * SCORE_ROUND;
+    return distance + mPlayer.capturedCount() * SCORE_PER_CAPTURE;
+}
+
+void Game::drawGameOverOverlay(Renderer& renderer) {
     mAssets.textDrawer.draw(renderer,
                             "GAME OVER",
                             {SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2},
