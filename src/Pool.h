@@ -25,28 +25,20 @@ public:
 
     void recycle(T* item);
 
-    Container getActiveItemsSnapshot() const {
-        mSnapshot.clear();
-        std::copy(mItems.begin(), mItems.begin() + mFirstFreeIdx, std::back_inserter(mSnapshot));
-        return mSnapshot;
-    }
-
 private:
     Creator mCreator;
     Container mItems;
-    int mFirstFreeIdx = 0;
-    mutable Container mSnapshot;
+    std::size_t mFirstFreeIdx = 0;
 };
 
 template<class T>
 T* Pool<T>::get() {
     T* item = nullptr;
-    auto freeItemIt = mItems.begin() + mFirstFreeIdx;
-    if (freeItemIt == mItems.end()) {
+    if (mFirstFreeIdx == mItems.size()) {
         item = mCreator();
         mItems.push_back(item);
     } else {
-        item = *freeItemIt;
+        item = mItems.at(mFirstFreeIdx);
     }
     ++mFirstFreeIdx;
     return item;
