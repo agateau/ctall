@@ -7,6 +7,7 @@ add_executable(ctall
     Pool.cpp
     ScrollComponent.cpp
     Scroller.cpp
+    TextDrawer.cpp
     Wall.cpp
 )
 

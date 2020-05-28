@@ -36,6 +36,8 @@ public:
     void switchToGameOverState();
 
 private:
+    void drawGameOverOverlay(SDL2pp::Renderer& renderer);
+
     enum class State { Running, GameOver };
 
     Assets mAssets;

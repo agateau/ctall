@@ -57,7 +57,17 @@ void Game::draw(Renderer& renderer) {
     for (auto* object : mGameObjects) {
         object->draw(renderer);
     }
+    if (mState == State::GameOver) {
+        drawGameOverOverlay(renderer);
+    }
     renderer.Present();
+}
+
+void Game::drawGameOverOverlay(SDL2pp::Renderer& renderer) {
+    mAssets.textDrawer.draw(renderer,
+                            "GAME OVER",
+                            {SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2},
+                            TextDrawer::HCENTER | TextDrawer::VCENTER);
 }
 
 void Game::onKeyPressed(const SDL_KeyboardEvent& event) {
