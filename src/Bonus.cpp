@@ -17,7 +17,8 @@ Bonus::Bonus(Game& game,
              Pool<Bonus>& pool,
              const Scroller& scroller,
              std::vector<Texture>& textures)
-        : mGame(game)
+        : GameObject(Category::Bonus)
+        , mGame(game)
         , mPool(pool)
         , mTextures(textures)
         , mScrollComponent(scroller, *this) {
@@ -44,4 +45,9 @@ void Bonus::update(float /*delta*/) {
 
 void Bonus::draw(SDL2pp::Renderer& renderer) {
     renderer.Copy(*mActiveTexture, NullOpt, mRect);
+}
+
+void Bonus::onCaptured() {
+    setActive(false);
+    mPool.recycle(this);
 }

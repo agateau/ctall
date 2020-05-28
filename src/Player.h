@@ -16,6 +16,10 @@ public:
 
     void draw(SDL2pp::Renderer& renderer) override;
 
+    int capturedCount() const {
+        return mCapturedCount;
+    }
+
 private:
     void updateTargetLane();
     void updateY(float delta);
@@ -26,6 +30,7 @@ private:
     const Input& mInput;
     int mCurrentLane = 0;
     int mTargetLane = 0;
+    int mCapturedCount = 0;
 };
 
 #endif // PLAYER_H

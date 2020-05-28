@@ -23,6 +23,8 @@ public:
 
     void draw(SDL2pp::Renderer& renderer) override;
 
+    void onCaptured();
+
 private:
     Game& mGame;
     Pool<Bonus>& mPool;

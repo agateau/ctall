@@ -9,7 +9,11 @@
 using namespace SDL2pp;
 
 Wall::Wall(Game& game, Pool<Wall>& pool, const Scroller& scroller, Texture& texture)
-        : mGame(game), mPool(pool), mTexture(texture), mScrollComponent(scroller, *this) {
+        : GameObject(Category::Bad)
+        , mGame(game)
+        , mPool(pool)
+        , mTexture(texture)
+        , mScrollComponent(scroller, *this) {
     mRect = Rect{{0, 0}, mTexture.GetSize()};
 }
 

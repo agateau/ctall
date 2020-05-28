@@ -1,5 +1,6 @@
 #include "Player.h"
 
+#include "Bonus.h"
 #include "Game.h"
 #include "Input.h"
 #include "constants.h"
@@ -9,7 +10,7 @@ using namespace SDL2pp;
 static constexpr float MOVE_SPEED = 400;
 
 Player::Player(Game& game, Texture& texture, const Input& input)
-        : mGame(game), mTexture(texture), mInput(input) {
+        : GameObject(Category::Player), mGame(game), mTexture(texture), mInput(input) {
     auto point = mTexture.GetSize();
     mRect.w = point.x;
     mRect.h = point.y;
@@ -62,12 +63,21 @@ static bool collide(const GameObject* o1, const GameObject* o2) {
 }
 
 void Player::checkCollisions() {
-    for (const auto* object : mGame.activeGameObjects()) {
+    for (auto* object : mGame.activeGameObjects()) {
         if (object == this) {
             continue;
         }
-        if (collide(this, object)) {
+        if (!collide(this, object)) {
+            continue;
+        }
+        auto category = object->category();
+        if (category == GameObject::Category::Bad) {
             mGame.switchToGameOverState();
+            return;
+        } else if (category == GameObject::Category::Bonus) {
+            auto bonus = static_cast<Bonus*>(object);
+            ++mCapturedCount;
+            bonus->onCaptured();
         }
     }
 }
