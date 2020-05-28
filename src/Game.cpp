@@ -19,7 +19,9 @@ Game::Game(Renderer& renderer)
         : mAssets(renderer)
         , mPlayer(*this, mAssets.player, mInput)
         , mScroller(*this)
-        , mWallPool([this]() { return new Wall(*this, mWallPool, mScroller, mAssets.wall); }) {
+        , mWallPool([this]() { return new Wall(*this, mWallPool, mScroller, mAssets.wall); })
+        , mBonusPool(
+              [this]() { return new Bonus(*this, mBonusPool, mScroller, mAssets.bonuses); }) {
     mGameObjects.push_back(&mPlayer);
 }
 
@@ -27,11 +29,22 @@ Game::~Game() {
 }
 
 void Game::spawnThings() {
+    int wallLane = MIN_LANE - 1;
     if (randint(0, 1) == 0) {
         auto wall = mWallPool.get();
-        int lane = randint(MIN_LANE, MAX_LANE);
-        wall->setup(lane);
+        wallLane = randint(MIN_LANE, MAX_LANE);
+        wall->setup(wallLane);
         mGameObjects.push_back(wall);
+    }
+
+    if (randint(0, 3) == 0) {
+        auto bonus = mBonusPool.get();
+        int bonusLane = wallLane;
+        while (bonusLane == wallLane) {
+            bonusLane = randint(MIN_LANE, MAX_LANE);
+        }
+        bonus->setup(bonusLane);
+        mGameObjects.push_back(bonus);
     }
 }
 

@@ -2,6 +2,9 @@
 
 #include <SDL2pp/SDL2pp.hh>
 #include <cassert>
+#include <filesystem>
+
+namespace fs = std::filesystem;
 
 using namespace SDL2pp;
 
@@ -21,10 +24,23 @@ Assets::Assets(Renderer& renderer)
         , textTexture(load(renderer, "font"))
         , player(load(renderer, "player"))
         , wall(load(renderer, "wall"))
+        , bonuses(loadAll(renderer, "bonus"))
         , textDrawer(textTexture, ALPHABET, CHAR_SIZE) {
 }
 
 Texture Assets::load(Renderer& renderer, const std::string& name) {
     auto path = mBaseDir + "/" + name + ".png";
     return Texture(renderer, path);
+}
+
+std::vector<Texture> Assets::loadAll(Renderer& renderer, const std::string& dirName) {
+    auto dirPath = mBaseDir + "/" + dirName;
+    std::vector<Texture> vec;
+
+    for (const fs::directory_entry& entry : fs::directory_iterator(dirPath)) {
+        if (entry.path().extension() == ".png") {
+            vec.emplace_back(Texture(renderer, entry.path()));
+        }
+    }
+    return vec;
 }

@@ -15,10 +15,12 @@ public:
 
     SDL2pp::Texture player;
     SDL2pp::Texture wall;
+    std::vector<SDL2pp::Texture> bonuses;
     TextDrawer textDrawer;
 
 private:
     SDL2pp::Texture load(SDL2pp::Renderer& renderer, const std::string& name);
+    std::vector<SDL2pp::Texture> loadAll(SDL2pp::Renderer& renderer, const std::string& dirName);
 };
 
 #endif // ASSETS_H

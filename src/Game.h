@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "Assets.h"
+#include "Bonus.h"
 #include "Input.h"
 #include "Player.h"
 #include "Pool.h"
@@ -45,6 +46,7 @@ private:
     Player mPlayer;
     Scroller mScroller;
     Pool<Wall> mWallPool;
+    Pool<Bonus> mBonusPool;
     std::vector<GameObject*> mGameObjects;
     State mState = State::Running;
 };
