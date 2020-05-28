@@ -25,12 +25,14 @@ Bonus::Bonus(Game& game,
 }
 
 void Bonus::setup(int lane) {
-    mRect.x = SCREEN_WIDTH;
-    mRect.y = mGame.yForLane(lane) - mRect.h / 2;
     mActiveTexture = &mTextures.at(randint(0, int(mTextures.size()) - 1));
     auto size = mActiveTexture->GetSize();
+
+    // Update h before y to properly center the bonus
     mRect.w = size.x;
     mRect.h = size.y;
+    mRect.x = SCREEN_WIDTH;
+    mRect.y = mGame.yForLane(lane) - mRect.h / 2;
     mScrollComponent.setup();
     setActive(true);
 }
