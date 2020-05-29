@@ -1,7 +1,7 @@
 #include "Player.h"
 
 #include "Bonus.h"
-#include "Game.h"
+#include "GameScreen.h"
 #include "Input.h"
 #include "constants.h"
 
@@ -9,13 +9,13 @@ using namespace SDL2pp;
 
 static constexpr float MOVE_SPEED = 400;
 
-Player::Player(Game& game, Texture& texture, const Input& input)
-        : GameObject(Category::Player), mGame(game), mTexture(texture), mInput(input) {
+Player::Player(GameScreen& gameScreen, Texture& texture, const Input& input)
+        : GameObject(Category::Player), mGameScreen(gameScreen), mTexture(texture), mInput(input) {
     auto point = mTexture.GetSize();
     mRect.w = point.x;
     mRect.h = point.y;
     mRect.x = 12;
-    mRect.y = mGame.yForLane(mCurrentLane) - mRect.h / 2;
+    mRect.y = mGameScreen.yForLane(mCurrentLane) - mRect.h / 2;
 }
 
 void Player::update(float delta) {
@@ -38,7 +38,7 @@ void Player::updateTargetLane() {
 }
 
 void Player::updateY(float delta) {
-    int targetY = mGame.yForLane(mTargetLane) - mRect.h / 2;
+    int targetY = mGameScreen.yForLane(mTargetLane) - mRect.h / 2;
 
     if (mTargetLane < mCurrentLane) {
         mRect.y = std::max(targetY, mRect.y - int(MOVE_SPEED * delta));
@@ -63,7 +63,7 @@ static bool collide(const GameObject* o1, const GameObject* o2) {
 }
 
 void Player::checkCollisions() {
-    for (auto* object : mGame.activeGameObjects()) {
+    for (auto* object : mGameScreen.activeGameObjects()) {
         if (object == this) {
             continue;
         }
@@ -72,7 +72,7 @@ void Player::checkCollisions() {
         }
         auto category = object->category();
         if (category == GameObject::Category::Bad) {
-            mGame.switchToGameOverState();
+            mGameScreen.switchToGameOverState();
             return;
         } else if (category == GameObject::Category::Bonus) {
             auto bonus = static_cast<Bonus*>(object);

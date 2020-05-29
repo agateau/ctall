@@ -1,4 +1,4 @@
-#include "Game.h"
+#include "GameScreen.h"
 
 #include <SDL2/SDL.h>
 
@@ -18,7 +18,7 @@ static constexpr int SCORE_PER_CAPTURE = 1000;
 
 using namespace SDL2pp;
 
-Game::Game(Renderer& renderer)
+GameScreen::GameScreen(Renderer& renderer)
         : mAssets(renderer)
         , mPlayer(*this, mAssets.player, mInput)
         , mScroller(*this)
@@ -28,10 +28,10 @@ Game::Game(Renderer& renderer)
     mGameObjects.push_back(&mPlayer);
 }
 
-Game::~Game() {
+GameScreen::~GameScreen() {
 }
 
-void Game::spawnThings() {
+void GameScreen::spawnThings() {
     int wallLane = MIN_LANE - 1;
     if (randint(0, 1) == 0) {
         auto wall = mWallPool.get();
@@ -51,7 +51,7 @@ void Game::spawnThings() {
     }
 }
 
-void Game::update(float delta) {
+void GameScreen::update(float delta) {
     if (mState != State::Running) {
         return;
     }
@@ -68,7 +68,7 @@ void Game::update(float delta) {
                        mGameObjects.end());
 }
 
-void Game::draw(Renderer& renderer) {
+void GameScreen::draw(Renderer& renderer) {
     renderer.Clear();
     for (auto* object : mGameObjects) {
         object->draw(renderer);
@@ -80,25 +80,25 @@ void Game::draw(Renderer& renderer) {
     renderer.Present();
 }
 
-void Game::drawHud(Renderer& renderer) {
+void GameScreen::drawHud(Renderer& renderer) {
     static char scoreText[40];
     std::snprintf(scoreText, sizeof(scoreText), "SCORE: %d", score());
     mAssets.textDrawer.draw(renderer, scoreText, {0, 0});
 }
 
-int Game::score() const {
+int GameScreen::score() const {
     int distance = int(mScroller.getPosition() / SCORE_ROUND) * SCORE_ROUND;
     return distance + mPlayer.capturedCount() * SCORE_PER_CAPTURE;
 }
 
-void Game::drawGameOverOverlay(Renderer& renderer) {
+void GameScreen::drawGameOverOverlay(Renderer& renderer) {
     mAssets.textDrawer.draw(renderer,
                             "GAME OVER\n\n",
                             {SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2},
                             TextDrawer::HCENTER | TextDrawer::VCENTER);
 }
 
-void Game::onKeyPressed(const SDL_KeyboardEvent& event) {
+void GameScreen::onKeyPressed(const SDL_KeyboardEvent& event) {
     if (event.keysym.sym == SDLK_UP) {
         mInput.up = true;
     } else if (event.keysym.sym == SDLK_DOWN) {
@@ -106,7 +106,7 @@ void Game::onKeyPressed(const SDL_KeyboardEvent& event) {
     }
 }
 
-void Game::onKeyReleased(const SDL_KeyboardEvent& event) {
+void GameScreen::onKeyReleased(const SDL_KeyboardEvent& event) {
     if (event.keysym.sym == SDLK_UP) {
         mInput.up = false;
     } else if (event.keysym.sym == SDLK_DOWN) {
@@ -114,14 +114,14 @@ void Game::onKeyReleased(const SDL_KeyboardEvent& event) {
     }
 }
 
-int Game::yForLane(int lane) const {
+int GameScreen::yForLane(int lane) const {
     return SCREEN_HEIGHT / 2 + lane * LANE_WIDTH;
 }
 
-const std::vector<GameObject*>& Game::activeGameObjects() const {
+const std::vector<GameObject*>& GameScreen::activeGameObjects() const {
     return mGameObjects;
 }
 
-void Game::switchToGameOverState() {
+void GameScreen::switchToGameOverState() {
     mState = State::GameOver;
 }

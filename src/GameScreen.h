@@ -15,11 +15,11 @@
 
 struct SDL_KeyboardEvent;
 
-class Game : public Screen, public Scroller::Listener {
+class GameScreen : public Screen, public Scroller::Listener {
 public:
-    Game(SDL2pp::Renderer& renderer);
+    GameScreen(SDL2pp::Renderer& renderer);
 
-    ~Game();
+    ~GameScreen();
 
     void spawnThings() override;
 

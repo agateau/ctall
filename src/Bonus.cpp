@@ -2,7 +2,7 @@
 
 #include <SDL2pp/SDL2pp.hh>
 
-#include "Game.h"
+#include "GameScreen.h"
 #include "Pool.h"
 #include "constants.h"
 
@@ -13,12 +13,12 @@ static int randint(int min, int max) {
     return min + random % (max - min + 1);
 }
 
-Bonus::Bonus(Game& game,
+Bonus::Bonus(GameScreen& gameScreen,
              Pool<Bonus>& pool,
              const Scroller& scroller,
              std::vector<Texture>& textures)
         : GameObject(Category::Bonus)
-        , mGame(game)
+        , mGameScreen(gameScreen)
         , mPool(pool)
         , mTextures(textures)
         , mScrollComponent(scroller, *this) {
@@ -32,7 +32,7 @@ void Bonus::setup(int lane) {
     mRect.w = size.x;
     mRect.h = size.y;
     mRect.x = SCREEN_WIDTH;
-    mRect.y = mGame.yForLane(lane) - mRect.h / 2;
+    mRect.y = mGameScreen.yForLane(lane) - mRect.h / 2;
     mScrollComponent.setup();
     setActive(true);
 }

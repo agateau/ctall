@@ -1,7 +1,7 @@
 add_executable(ctall
     Assets.cpp
     Bonus.cpp
-    Game.cpp
+    GameScreen.cpp
     GameObject.cpp
     main.cpp
     Player.cpp

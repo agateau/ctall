@@ -6,11 +6,11 @@
 #include "GameObject.h"
 
 struct Input;
-class Game;
+class GameScreen;
 
 class Player : public GameObject {
 public:
-    Player(Game& game, SDL2pp::Texture& texture, const Input& input);
+    Player(GameScreen& game, SDL2pp::Texture& texture, const Input& input);
 
     void update(float delta) override;
 
@@ -25,7 +25,7 @@ private:
     void updateY(float delta);
     void checkCollisions();
 
-    Game& mGame;
+    GameScreen& mGameScreen;
     SDL2pp::Texture& mTexture;
     const Input& mInput;
     int mCurrentLane = 0;

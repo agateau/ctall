@@ -6,13 +6,13 @@
 #include "GameObject.h"
 #include "ScrollComponent.h"
 
-class Game;
+class GameScreen;
 
 template <class T> class Pool;
 
 class Bonus : public GameObject {
 public:
-    Bonus(Game& game,
+    Bonus(GameScreen& game,
           Pool<Bonus>& pool,
           const Scroller& scroller,
           std::vector<SDL2pp::Texture>& textures);
@@ -26,7 +26,7 @@ public:
     void onCaptured();
 
 private:
-    Game& mGame;
+    GameScreen& mGameScreen;
     Pool<Bonus>& mPool;
     std::vector<SDL2pp::Texture>& mTextures;
     ScrollComponent mScrollComponent;

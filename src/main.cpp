@@ -3,7 +3,7 @@
 #include <SDL2pp/SDL2pp.hh>
 
 #include "App.h"
-#include "Game.h"
+#include "GameScreen.h"
 #include "constants.h"
 
 using namespace SDL2pp;
@@ -16,7 +16,7 @@ int main(int argc, char** argv) {
 
     App app("Catch them all", SCREEN_WIDTH, SCREEN_HEIGHT);
 
-    app.run(std::make_unique<Game>(app.renderer()));
+    app.run(std::make_unique<GameScreen>(app.renderer()));
 
     return EXIT_SUCCESS;
 }

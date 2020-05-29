@@ -6,13 +6,13 @@
 #include "GameObject.h"
 #include "ScrollComponent.h"
 
-class Game;
+class GameScreen;
 
 template <class T> class Pool;
 
 class Wall : public GameObject {
 public:
-    Wall(Game& game, Pool<Wall>& pool, const Scroller& scroller, SDL2pp::Texture& texture);
+    Wall(GameScreen& game, Pool<Wall>& pool, const Scroller& scroller, SDL2pp::Texture& texture);
 
     void setup(int lane);
 
@@ -21,7 +21,7 @@ public:
     void draw(SDL2pp::Renderer& renderer) override;
 
 private:
-    Game& mGame;
+    GameScreen& mGameScreen;
     Pool<Wall>& mPool;
     SDL2pp::Texture& mTexture;
     ScrollComponent mScrollComponent;
