@@ -7,7 +7,9 @@ add_executable(ctall
     Player.cpp
     ScrollComponent.cpp
     Scroller.cpp
+    tools/App.cpp
     tools/Pool.cpp
+    tools/Screen.cpp
     tools/TextDrawer.cpp
     Wall.cpp
 )

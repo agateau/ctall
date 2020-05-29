@@ -9,12 +9,13 @@
 #include "Input.h"
 #include "Player.h"
 #include "Pool.h"
+#include "Screen.h"
 #include "Scroller.h"
 #include "Wall.h"
 
 struct SDL_KeyboardEvent;
 
-class Game : public Scroller::Listener {
+class Game : public Screen, public Scroller::Listener {
 public:
     Game(SDL2pp::Renderer& renderer);
 
@@ -26,9 +27,9 @@ public:
 
     void draw(SDL2pp::Renderer& renderer);
 
-    void onKeyPressed(const SDL_KeyboardEvent& event);
+    void onKeyPressed(const SDL_KeyboardEvent& event) override;
 
-    void onKeyReleased(const SDL_KeyboardEvent& event);
+    void onKeyReleased(const SDL_KeyboardEvent& event) override;
 
     int yForLane(int lane) const;
 
