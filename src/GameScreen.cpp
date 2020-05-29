@@ -74,7 +74,6 @@ void GameScreen::update(float delta) {
 }
 
 void GameScreen::draw(Renderer& renderer) {
-    renderer.Clear();
     for (auto* object : mGameObjects) {
         object->draw(renderer);
     }

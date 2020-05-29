@@ -35,6 +35,7 @@ void App::run() {
     auto loopStep = [this](float delta) {
         SDL_Event event;
         while (SDL_PollEvent(&event)) {
+            mScreen->onEvent(event);
             if (event.type == SDL_QUIT) {
                 return false;
             } else if (event.type == SDL_KEYDOWN) {
@@ -47,6 +48,7 @@ void App::run() {
             }
         }
         mScreen->update(delta);
+        mRenderer.Clear();
         mScreen->draw(mRenderer);
         mRenderer.Present();
         return true;
@@ -72,3 +74,4 @@ void App::run() {
 
 void App::quit() {
     mRunning = false;
+}
