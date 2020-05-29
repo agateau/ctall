@@ -81,8 +81,9 @@ void Game::draw(Renderer& renderer) {
 }
 
 void Game::drawHud(Renderer& renderer) {
-    auto msg = "SCORE: " + std::to_string(score());
-    mAssets.textDrawer.draw(renderer, msg, {0, 0});
+    static char scoreText[40];
+    std::snprintf(scoreText, sizeof(scoreText), "SCORE: %d", score());
+    mAssets.textDrawer.draw(renderer, scoreText, {0, 0});
 }
 
 int Game::score() const {
