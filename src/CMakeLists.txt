@@ -1,16 +1,19 @@
 add_executable(ctall
     Assets.cpp
     Bonus.cpp
-    main.cpp
     Game.cpp
     GameObject.cpp
+    main.cpp
     Player.cpp
-    Pool.cpp
     ScrollComponent.cpp
     Scroller.cpp
-    TextDrawer.cpp
+    tools/Pool.cpp
+    tools/TextDrawer.cpp
     Wall.cpp
 )
 
-target_include_directories(ctall PRIVATE ${SDL2PP_INCLUDE_DIRS})
+target_include_directories(ctall PRIVATE
+    ${SDL2PP_INCLUDE_DIRS}
+    ${CMAKE_CURRENT_SOURCE_DIR}/tools
+)
 target_link_libraries(ctall ${SDL2PP_LIBRARIES})

@@ -93,7 +93,7 @@ int Game::score() const {
 
 void Game::drawGameOverOverlay(Renderer& renderer) {
     mAssets.textDrawer.draw(renderer,
-                            "GAME OVER",
+                            "GAME OVER\n\n",
                             {SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2},
                             TextDrawer::HCENTER | TextDrawer::VCENTER);
 }
