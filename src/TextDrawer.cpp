@@ -9,7 +9,7 @@ TextDrawer::TextDrawer(Texture& image, const std::string& alphabet, const Point&
         , mColumnCount(image.GetWidth() / mCharSize.x) {
 }
 
-static std::pair<int, int> computeTextSize(const std::string& text) {
+static std::pair<int, int> computeTextSize(const std::string_view& text) {
     int rows = 1;
     int widestColumn = 0;
     int column = 0;
@@ -27,7 +27,7 @@ static std::pair<int, int> computeTextSize(const std::string& text) {
 }
 
 void TextDrawer::draw(Renderer& renderer,
-                      const std::string& text,
+                      const std::string_view& text,
                       const Point& position,
                       int align) {
     auto [columns, rows] = computeTextSize(text);
@@ -54,7 +54,7 @@ void TextDrawer::draw(Renderer& renderer,
             y += mCharSize.y;
             x = startX;
         } else {
-            if (ch  != ' ') {
+            if (ch != ' ') {
                 auto idx = mAlphabet.find(ch);
                 assert(idx != std::string::npos);
                 drawChar(renderer, x, y, idx);
@@ -64,7 +64,7 @@ void TextDrawer::draw(Renderer& renderer,
     }
 }
 
-void TextDrawer::drawChar(SDL2pp::Renderer &renderer, int x, int y, std::string::size_type idx) {
+void TextDrawer::drawChar(SDL2pp::Renderer& renderer, int x, int y, std::string::size_type idx) {
     int row = int(idx) / mColumnCount;
     int column = idx % mColumnCount;
     Rect srcRect{{column * mCharSize.x, row * mCharSize.y}, mCharSize};

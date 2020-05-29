@@ -5,19 +5,14 @@
 
 class TextDrawer {
 public:
-    enum Align {
-        LEFT = 1,
-        HCENTER = 2,
-        RIGHT = 4,
-        TOP = 8,
-        VCENTER = 16,
-        BOTTOM = 32
-    };
+    enum Align { LEFT = 1, HCENTER = 2, RIGHT = 4, TOP = 8, VCENTER = 16, BOTTOM = 32 };
 
     TextDrawer(SDL2pp::Texture& image, const std::string& alphabet, const SDL2pp::Point& charSize);
 
-    void draw(SDL2pp::Renderer& renderer, const std::string& text, const SDL2pp::Point& position,
-              int align=TOP | LEFT);
+    void draw(SDL2pp::Renderer& renderer,
+              const std::string_view& text,
+              const SDL2pp::Point& position,
+              int align = TOP | LEFT);
 
 private:
     void drawChar(SDL2pp::Renderer& renderer, int x, int y, std::string::size_type idx);
