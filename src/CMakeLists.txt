@@ -10,6 +10,7 @@ add_executable(ctall
     Scroller.cpp
     StartScreen.cpp
     tools/App.cpp
+    tools/Menu.cpp
     tools/Pool.cpp
     tools/Screen.cpp
     tools/TextDrawer.cpp

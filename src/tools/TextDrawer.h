@@ -14,6 +14,10 @@ public:
               const SDL2pp::Point& position,
               int align = TOP | LEFT);
 
+    const SDL2pp::Point& charSize() const {
+        return mCharSize;
+    }
+
 private:
     void drawChar(SDL2pp::Renderer& renderer, int x, int y, std::string::size_type idx);
     SDL2pp::Texture& mImage;
