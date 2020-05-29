@@ -1,12 +1,14 @@
 add_executable(ctall
     Assets.cpp
     Bonus.cpp
+    CtallApp.cpp
     GameScreen.cpp
     GameObject.cpp
     main.cpp
     Player.cpp
     ScrollComponent.cpp
     Scroller.cpp
+    StartScreen.cpp
     tools/App.cpp
     tools/Pool.cpp
     tools/Screen.cpp

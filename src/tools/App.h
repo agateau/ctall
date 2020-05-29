@@ -14,7 +14,7 @@ public:
 
     void setScreen(std::unique_ptr<Screen> screen);
 
-    void run(std::unique_ptr<Screen> screen);
+    void run();
 
     SDL2pp::Renderer& renderer() {
         return mRenderer;

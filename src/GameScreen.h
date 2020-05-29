@@ -4,7 +4,6 @@
 #include <SDL2pp/SDL2pp.hh>
 #include <vector>
 
-#include "Assets.h"
 #include "Bonus.h"
 #include "Input.h"
 #include "Player.h"
@@ -13,11 +12,12 @@
 #include "Scroller.h"
 #include "Wall.h"
 
-struct SDL_KeyboardEvent;
+class CtallApp;
+class Assets;
 
 class GameScreen : public Screen, public Scroller::Listener {
 public:
-    GameScreen(SDL2pp::Renderer& renderer);
+    GameScreen(CtallApp& app);
 
     ~GameScreen();
 
@@ -44,7 +44,8 @@ private:
 
     enum class State { Running, GameOver };
 
-    Assets mAssets;
+    CtallApp& mApp;
+    Assets& mAssets;
     Input mInput;
     Player mPlayer;
     Scroller mScroller;

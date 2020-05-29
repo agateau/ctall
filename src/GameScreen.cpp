@@ -3,10 +3,14 @@
 #include <SDL2/SDL.h>
 
 #include <SDL2pp/SDL2pp.hh>
-#include <algorithm>
 
+#include "Assets.h"
+#include "CtallApp.h"
 #include "Scroller.h"
 #include "Wall.h"
+
+// std
+#include <algorithm>
 
 static int randint(int min, int max) {
     int random = std::rand();
@@ -18,8 +22,9 @@ static constexpr int SCORE_PER_CAPTURE = 1000;
 
 using namespace SDL2pp;
 
-GameScreen::GameScreen(Renderer& renderer)
-        : mAssets(renderer)
+GameScreen::GameScreen(CtallApp& app)
+        : mApp(app)
+        , mAssets(app.assets())
         , mPlayer(*this, mAssets.player, mInput)
         , mScroller(*this)
         , mWallPool([this]() { return new Wall(*this, mWallPool, mScroller, mAssets.wall); })
@@ -77,7 +82,6 @@ void GameScreen::draw(Renderer& renderer) {
     if (mState == State::GameOver) {
         drawGameOverOverlay(renderer);
     }
-    renderer.Present();
 }
 
 void GameScreen::drawHud(Renderer& renderer) {
@@ -95,7 +99,11 @@ void GameScreen::drawGameOverOverlay(Renderer& renderer) {
     mAssets.textDrawer.draw(renderer,
                             "GAME OVER\n\n",
                             {SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2},
-                            TextDrawer::HCENTER | TextDrawer::VCENTER);
+                            TextDrawer::HCENTER | TextDrawer::BOTTOM);
+    mAssets.textDrawer.draw(renderer,
+                            "PRESS SPACE TO RESTART",
+                            {SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2},
+                            TextDrawer::HCENTER | TextDrawer::TOP);
 }
 
 void GameScreen::onKeyPressed(const SDL_KeyboardEvent& event) {
@@ -107,6 +115,12 @@ void GameScreen::onKeyPressed(const SDL_KeyboardEvent& event) {
 }
 
 void GameScreen::onKeyReleased(const SDL_KeyboardEvent& event) {
+    if (mState == State::GameOver) {
+        if (event.keysym.sym == SDLK_SPACE) {
+            mApp.showGameScreen();
+        }
+        return;
+    }
     if (event.keysym.sym == SDLK_UP) {
         mInput.up = false;
     } else if (event.keysym.sym == SDLK_DOWN) {

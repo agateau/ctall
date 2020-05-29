@@ -30,9 +30,8 @@ void App::setScreen(std::unique_ptr<Screen> screen) {
     mScreen = std::move(screen);
 }
 
-void App::run(std::unique_ptr<Screen> startScreen) {
-    setScreen(std::move(startScreen));
-
+void App::run() {
+    assert(mScreen.get());
     auto loopStep = [this](float delta) {
         SDL_Event event;
         while (SDL_PollEvent(&event)) {
@@ -49,6 +48,7 @@ void App::run(std::unique_ptr<Screen> startScreen) {
         }
         mScreen->update(delta);
         mScreen->draw(mRenderer);
+        mRenderer.Present();
         return true;
     };
 
