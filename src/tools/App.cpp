@@ -54,7 +54,7 @@ void App::run() {
 
     float delta = 1.0 / FPS;
     auto nextTime = now();
-    while (true) {
+    while (mRunning) {
         auto currentTime = now();
         if (currentTime >= nextTime) {
             nextTime += std::chrono::microseconds(int(1000 * delta));
@@ -69,3 +69,6 @@ void App::run() {
         }
     }
 }
+
+void App::quit() {
+    mRunning = false;
