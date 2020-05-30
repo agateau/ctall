@@ -26,6 +26,35 @@ Assets::Assets(Renderer& renderer)
         , wall(load(renderer, "wall"))
         , bonuses(loadAll(renderer, "bonus"))
         , textDrawer(textTexture, ALPHABET, CHAR_SIZE) {
+    loadBackgrounds(renderer);
+}
+
+void Assets::loadBackgrounds(Renderer& renderer) {
+    auto loadBackground = [&renderer](const fs::path& backgroundDir) {
+        Texture border = Texture(renderer, backgroundDir / "border.png");
+        std::vector<Texture> roads;
+        for (int idx = 0;; ++idx) {
+            auto roadPath = backgroundDir / ("road-" + std::to_string(idx) + ".png");
+            if (!fs::is_regular_file(roadPath)) {
+                break;
+            }
+            roads.emplace_back(Texture(renderer, roadPath));
+        }
+        assert(!roads.empty());
+        return BackgroundAssets{
+            std::move(border),
+            std::move(roads)
+        };
+    };
+    auto backgroundsDir = fs::path(mBaseDir) / "backgrounds";
+    for (int idx = 0;; ++idx) {
+        auto backgroundDir = backgroundsDir / std::to_string(idx);
+        if (!fs::is_directory(backgroundDir)) {
+            break;
+        }
+        backgrounds.emplace_back(loadBackground(backgroundDir));
+    }
+    assert(!backgrounds.empty());
 }
 
 Texture Assets::load(Renderer& renderer, const std::string& name) {

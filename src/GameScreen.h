@@ -4,6 +4,7 @@
 #include <SDL2pp/SDL2pp.hh>
 #include <vector>
 
+#include "Background.h"
 #include "Bonus.h"
 #include "Input.h"
 #include "Menu.h"
@@ -13,6 +14,7 @@
 #include "Scroller.h"
 #include "Wall.h"
 
+class Background;
 class CtallApp;
 class Assets;
 
@@ -53,6 +55,7 @@ private:
     Input mInput;
     Player mPlayer;
     Scroller mScroller;
+    Background mBackground;
     Pool<Wall> mWallPool;
     Pool<Bonus> mBonusPool;
     Menu mGameOverMenu;

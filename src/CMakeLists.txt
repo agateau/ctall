@@ -1,5 +1,6 @@
 add_executable(ctall
     Assets.cpp
+    Background.cpp
     Bonus.cpp
     CtallApp.cpp
     GameScreen.cpp

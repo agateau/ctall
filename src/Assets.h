@@ -3,6 +3,7 @@
 
 #include <SDL2pp/SDL2pp.hh>
 
+#include "Background.h"
 #include "TextDrawer.h"
 
 struct Assets {
@@ -16,9 +17,11 @@ public:
     SDL2pp::Texture player;
     SDL2pp::Texture wall;
     std::vector<SDL2pp::Texture> bonuses;
+    std::vector<BackgroundAssets> backgrounds;
     TextDrawer textDrawer;
 
 private:
+    void loadBackgrounds(SDL2pp::Renderer& renderer);
     SDL2pp::Texture load(SDL2pp::Renderer& renderer, const std::string& name);
     std::vector<SDL2pp::Texture> loadAll(SDL2pp::Renderer& renderer, const std::string& dirName);
 };

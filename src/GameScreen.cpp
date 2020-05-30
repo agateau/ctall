@@ -21,6 +21,7 @@ GameScreen::GameScreen(CtallApp& app)
         , mAssets(app.assets())
         , mPlayer(*this, mAssets.player, mInput)
         , mScroller(*this)
+        , mBackground(*this, mScroller, mAssets.backgrounds)
         , mWallPool([this]() { return new Wall(*this, mWallPool, mScroller, mAssets.wall); })
         , mBonusPool([this]() { return new Bonus(*this, mBonusPool, mScroller, mAssets.bonuses); })
         , mGameOverMenu(mAssets.textDrawer)
@@ -62,6 +63,7 @@ void GameScreen::update(float delta) {
         return;
     }
     mScroller.update(delta);
+    mBackground.update();
     // Do not use an iterator here since it might become invalid if mGameObjects is resized after
     // an addition
     for (int idx = int(mGameObjects.size() - 1); idx >= 0; --idx) {
@@ -75,6 +77,7 @@ void GameScreen::update(float delta) {
 }
 
 void GameScreen::draw(Renderer& renderer) {
+    mBackground.draw(renderer);
     for (auto* object : mGameObjects) {
         object->draw(renderer);
     }
