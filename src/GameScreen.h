@@ -42,10 +42,11 @@ public:
 
 private:
     void drawGameOverOverlay(SDL2pp::Renderer& renderer);
+    void drawPauseOverlay(SDL2pp::Renderer& renderer);
     void drawHud(SDL2pp::Renderer& renderer);
     int score() const;
 
-    enum class State { Running, GameOver };
+    enum class State { Running, Paused, GameOver };
 
     CtallApp& mApp;
     Assets& mAssets;
@@ -55,6 +56,7 @@ private:
     Pool<Wall> mWallPool;
     Pool<Bonus> mBonusPool;
     Menu mGameOverMenu;
+    Menu mPauseMenu;
     std::vector<GameObject*> mGameObjects;
     State mState = State::Running;
 };

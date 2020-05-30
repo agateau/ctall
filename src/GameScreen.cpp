@@ -29,11 +29,15 @@ GameScreen::GameScreen(CtallApp& app)
         , mScroller(*this)
         , mWallPool([this]() { return new Wall(*this, mWallPool, mScroller, mAssets.wall); })
         , mBonusPool([this]() { return new Bonus(*this, mBonusPool, mScroller, mAssets.bonuses); })
-        , mGameOverMenu(mAssets.textDrawer) {
+        , mGameOverMenu(mAssets.textDrawer)
+        , mPauseMenu(mAssets.textDrawer) {
     mGameObjects.push_back(&mPlayer);
 
     mGameOverMenu.addItem("RESTART", [&app] { app.showGameScreen(); });
     mGameOverMenu.addItem("BACK TO MENU", [&app] { app.showStartScreen(); });
+
+    mPauseMenu.addItem("CONTINUE", [this] { mState = State::Running; });
+    mPauseMenu.addItem("BACK TO MENU", [&app] { app.showStartScreen(); });
 }
 
 GameScreen::~GameScreen() {
@@ -83,12 +87,16 @@ void GameScreen::draw(Renderer& renderer) {
     drawHud(renderer);
     if (mState == State::GameOver) {
         drawGameOverOverlay(renderer);
+    } else if (mState == State::Paused) {
+        drawPauseOverlay(renderer);
     }
 }
 
 void GameScreen::onEvent(const SDL_Event& event) {
     if (mState == State::GameOver) {
         mGameOverMenu.onEvent(event);
+    } else if (mState == State::Paused) {
+        mPauseMenu.onEvent(event);
     }
 }
 
@@ -110,6 +118,13 @@ void GameScreen::drawGameOverOverlay(Renderer& renderer) {
     mGameOverMenu.draw(renderer, center);
 }
 
+void GameScreen::drawPauseOverlay(Renderer& renderer) {
+    Point center = {SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2};
+    mAssets.textDrawer.draw(
+        renderer, "PAUSED\n\n", center, TextDrawer::HCENTER | TextDrawer::BOTTOM);
+    mPauseMenu.draw(renderer, center);
+}
+
 void GameScreen::onKeyPressed(const SDL_KeyboardEvent& event) {
     if (event.keysym.sym == SDLK_UP) {
         mInput.up = true;
@@ -119,16 +134,19 @@ void GameScreen::onKeyPressed(const SDL_KeyboardEvent& event) {
 }
 
 void GameScreen::onKeyReleased(const SDL_KeyboardEvent& event) {
+    auto sym = event.keysym.sym;
     if (mState == State::GameOver) {
-        if (event.keysym.sym == SDLK_SPACE) {
+        if (sym == SDLK_SPACE) {
             mApp.showGameScreen();
         }
         return;
     }
-    if (event.keysym.sym == SDLK_UP) {
+    if (sym == SDLK_UP) {
         mInput.up = false;
-    } else if (event.keysym.sym == SDLK_DOWN) {
+    } else if (sym == SDLK_DOWN) {
         mInput.down = false;
+    } else if (sym == SDLK_ESCAPE) {
+        mState = State::Paused;
     }
 }
 
