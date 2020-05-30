@@ -6,6 +6,7 @@
 
 #include "Bonus.h"
 #include "Input.h"
+#include "Menu.h"
 #include "Player.h"
 #include "Pool.h"
 #include "Screen.h"
@@ -26,6 +27,8 @@ public:
     void update(float delta);
 
     void draw(SDL2pp::Renderer& renderer);
+
+    void onEvent(const SDL_Event& event) override;
 
     void onKeyPressed(const SDL_KeyboardEvent& event) override;
 
@@ -51,6 +54,7 @@ private:
     Scroller mScroller;
     Pool<Wall> mWallPool;
     Pool<Bonus> mBonusPool;
+    Menu mGameOverMenu;
     std::vector<GameObject*> mGameObjects;
     State mState = State::Running;
 };

@@ -28,9 +28,12 @@ GameScreen::GameScreen(CtallApp& app)
         , mPlayer(*this, mAssets.player, mInput)
         , mScroller(*this)
         , mWallPool([this]() { return new Wall(*this, mWallPool, mScroller, mAssets.wall); })
-        , mBonusPool(
-              [this]() { return new Bonus(*this, mBonusPool, mScroller, mAssets.bonuses); }) {
+        , mBonusPool([this]() { return new Bonus(*this, mBonusPool, mScroller, mAssets.bonuses); })
+        , mGameOverMenu(mAssets.textDrawer) {
     mGameObjects.push_back(&mPlayer);
+
+    mGameOverMenu.addItem("RESTART", [&app] { app.showGameScreen(); });
+    mGameOverMenu.addItem("BACK TO MENU", [&app] { app.showStartScreen(); });
 }
 
 GameScreen::~GameScreen() {
@@ -83,6 +86,12 @@ void GameScreen::draw(Renderer& renderer) {
     }
 }
 
+void GameScreen::onEvent(const SDL_Event& event) {
+    if (mState == State::GameOver) {
+        mGameOverMenu.onEvent(event);
+    }
+}
+
 void GameScreen::drawHud(Renderer& renderer) {
     static char scoreText[40];
     std::snprintf(scoreText, sizeof(scoreText), "SCORE: %d", score());
@@ -95,14 +104,10 @@ int GameScreen::score() const {
 }
 
 void GameScreen::drawGameOverOverlay(Renderer& renderer) {
-    mAssets.textDrawer.draw(renderer,
-                            "GAME OVER\n\n",
-                            {SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2},
-                            TextDrawer::HCENTER | TextDrawer::BOTTOM);
-    mAssets.textDrawer.draw(renderer,
-                            "PRESS SPACE TO RESTART",
-                            {SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2},
-                            TextDrawer::HCENTER | TextDrawer::TOP);
+    Point center = {SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2};
+    mAssets.textDrawer.draw(
+        renderer, "GAME OVER\n\n", center, TextDrawer::HCENTER | TextDrawer::BOTTOM);
+    mGameOverMenu.draw(renderer, center);
 }
 
 void GameScreen::onKeyPressed(const SDL_KeyboardEvent& event) {
