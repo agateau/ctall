@@ -6,21 +6,15 @@
 
 #include "Assets.h"
 #include "CtallApp.h"
+#include "Random.h"
 #include "Scroller.h"
 #include "Wall.h"
-
-// std
-#include <algorithm>
-
-static int randint(int min, int max) {
-    int random = std::rand();
-    return min + random % (max - min + 1);
-}
 
 static constexpr int SCORE_ROUND = 100;
 static constexpr int SCORE_PER_CAPTURE = 1000;
 
 using namespace SDL2pp;
+using namespace Random;
 
 GameScreen::GameScreen(CtallApp& app)
         : mApp(app)
@@ -45,18 +39,18 @@ GameScreen::~GameScreen() {
 
 void GameScreen::spawnThings() {
     int wallLane = MIN_LANE - 1;
-    if (randint(0, 1) == 0) {
+    if (randomBool() == 0) {
         auto wall = mWallPool.get();
-        wallLane = randint(MIN_LANE, MAX_LANE);
+        wallLane = randomRange(MIN_LANE, MAX_LANE + 1);
         wall->setup(wallLane);
         mGameObjects.push_back(wall);
     }
 
-    if (randint(0, 3) == 0) {
+    if (randomRange(4) == 0) {
         auto bonus = mBonusPool.get();
         int bonusLane = wallLane;
         while (bonusLane == wallLane) {
-            bonusLane = randint(MIN_LANE, MAX_LANE);
+            bonusLane = randomRange(MIN_LANE, MAX_LANE + 1);
         }
         bonus->setup(bonusLane);
         mGameObjects.push_back(bonus);

@@ -4,14 +4,10 @@
 
 #include "GameScreen.h"
 #include "Pool.h"
+#include "Random.h"
 #include "constants.h"
 
 using namespace SDL2pp;
-
-static int randint(int min, int max) {
-    int random = std::rand();
-    return min + random % (max - min + 1);
-}
 
 Bonus::Bonus(GameScreen& gameScreen,
              Pool<Bonus>& pool,
@@ -25,7 +21,7 @@ Bonus::Bonus(GameScreen& gameScreen,
 }
 
 void Bonus::setup(int lane) {
-    mActiveTexture = &mTextures.at(randint(0, int(mTextures.size()) - 1));
+    mActiveTexture = &Random::randomChoice(mTextures);
     auto size = mActiveTexture->GetSize();
 
     // Update h before y to properly center the bonus
