@@ -37,11 +37,8 @@ void App::run() {
         while (SDL_PollEvent(&event)) {
             mScreen->onEvent(event);
             if (event.type == SDL_QUIT) {
-                return false;
+                quit();
             } else if (event.type == SDL_KEYDOWN) {
-                if (event.key.keysym.sym == SDLK_ESCAPE) {
-                    return false;
-                }
                 mScreen->onKeyPressed(event.key);
             } else if (event.type == SDL_KEYUP) {
                 mScreen->onKeyReleased(event.key);
@@ -51,7 +48,6 @@ void App::run() {
         mRenderer.Clear();
         mScreen->draw(mRenderer);
         mRenderer.Present();
-        return true;
     };
 
     float delta = 1.0 / FPS;
@@ -60,9 +56,7 @@ void App::run() {
         auto currentTime = now();
         if (currentTime >= nextTime) {
             nextTime += std::chrono::microseconds(int(1000 * delta));
-            if (!loopStep(delta)) {
-                break;
-            }
+            loopStep(delta);
         } else {
             auto duration = nextTime - currentTime;
             if (duration > std::chrono::microseconds(0)) {
