@@ -12,7 +12,6 @@ add_executable(ctall
     StartScreen.cpp
     tools/App.cpp
     tools/Menu.cpp
-    tools/Pool.cpp
     tools/Screen.cpp
     tools/TextDrawer.cpp
     Wall.cpp

@@ -7,10 +7,7 @@
 
 using namespace SDL2pp;
 
-int main(int argc, char** argv) {
-    bool useFramerateLimit = argc == 2 && std::string(argv[1]) == "--ufl";
-    std::cout << "useFramerateLimit=" << useFramerateLimit << '\n';
-
+int main(int /*argc*/, char** /*argv*/) {
     SDL sdl(SDL_INIT_VIDEO);
 
     CtallApp app;
