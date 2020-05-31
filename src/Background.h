@@ -26,6 +26,8 @@ public:
 
     void draw(SDL2pp::Renderer& renderer);
 
+    void setLevel(int level);
+
 private:
     void fillColumn(Column& column) const;
     GameScreen& mGameScreen;

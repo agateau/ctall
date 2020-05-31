@@ -58,6 +58,10 @@ void GameScreen::spawnThings() {
     }
 }
 
+void GameScreen::onLevelChanged(int level) {
+    mBackground.setLevel(level);
+}
+
 void GameScreen::update(float delta) {
     if (mState != State::Running) {
         return;

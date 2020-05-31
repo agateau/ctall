@@ -10,14 +10,15 @@ void Scroller::update(float delta) {
     mPos += mScrollSpeed * delta;
     if (int(mPos) % SPAWN_SPACING < int(oldPos) % SPAWN_SPACING) {
         mListener.spawnThings();
-        accelerate();
+    }
+    int oldLevel = int(oldPos / LEVEL_LENGTH);
+    int level = int(mPos / LEVEL_LENGTH);
+    if (level > oldLevel) {
+        mScrollSpeed *= LEVEL_SPEEDUP;
+        mListener.onLevelChanged(level);
     }
 }
 
 float Scroller::getPosition() const {
     return mPos;
-}
-
-void Scroller::accelerate() {
-    mScrollSpeed *= SCROLL_SPEED_MULTIPLIER;
 }

@@ -26,6 +26,8 @@ public:
 
     void spawnThings() override;
 
+    void onLevelChanged(int level) override;
+
     void update(float delta);
 
     void draw(SDL2pp::Renderer& renderer);

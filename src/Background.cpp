@@ -46,8 +46,12 @@ void Background::draw(SDL2pp::Renderer& renderer) {
     }
 }
 
+void Background::setLevel(int level) {
+    mLevel = level;
+}
+
 void Background::fillColumn(Background::Column& column) const {
-    BackgroundAssets& assets = mBackgroundAssets.at(mLevel);
+    BackgroundAssets& assets = mBackgroundAssets.at(mLevel % mBackgroundAssets.size());
     auto it = column.begin();
     auto last = column.end() - 1;
     *it = &assets.border;

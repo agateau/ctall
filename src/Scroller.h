@@ -9,6 +9,7 @@ public:
     public:
         virtual ~Listener();
         virtual void spawnThings() = 0;
+        virtual void onLevelChanged(int level) = 0;
     };
 
     Scroller(Listener& listener);
@@ -18,8 +19,6 @@ public:
     float getPosition() const;
 
 private:
-    void accelerate();
-
     Listener& mListener;
     float mPos = 0;
     float mScrollSpeed = START_SCROLL_SPEED;
