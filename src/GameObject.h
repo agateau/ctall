@@ -5,11 +5,7 @@
 
 class GameObject {
 public:
-    enum class Category {
-        Player,
-        Bad,
-        Bonus
-    };
+    enum class Category { Player, Bad, Bonus };
 
     explicit GameObject(Category category);
     virtual ~GameObject();
@@ -30,6 +26,19 @@ public:
         return mCategory;
     }
 
+    static bool collide(const GameObject& obj1, const GameObject& obj2);
+
+    template <typename Iterator>
+    static Iterator findCollision(const GameObject& object, Iterator first, Iterator last) {
+        return std::find_if(first, last, [&object](const GameObject* other) {
+            if (&object == other) {
+                // Skip ourselves
+                return false;
+            }
+            return collide(object, *other);
+        });
+    }
+
 protected:
     void setActive(bool active);
 
@@ -39,6 +48,5 @@ protected:
 private:
     bool mActive = true;
 };
-
 
 #endif /* GAMEOBJECT_H */
