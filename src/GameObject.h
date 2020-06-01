@@ -3,6 +3,8 @@
 
 #include <SDL2pp/SDL2pp.hh>
 
+class Mask;
+
 class GameObject {
 public:
     enum class Category { Player, Bad, Bonus };
@@ -46,6 +48,7 @@ protected:
     Category mCategory;
 
 private:
+    Mask* mMask = nullptr;
     bool mActive = true;
 };
 

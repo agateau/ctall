@@ -1,4 +1,5 @@
 add_executable(tests
+    MaskTests.cpp
     PoolTests.cpp
     tests.cpp)
 

@@ -54,7 +54,7 @@ void Player::checkCollisions() {
     auto it = mGameScreen.activeGameObjects().begin();
     auto end = mGameScreen.activeGameObjects().end();
     for (;; ++it) {
-        it = GameObject::collide(*this, it, end);
+        it = GameObject::findCollision(*this, it, end);
         if (it == end) {
             break;
         }
