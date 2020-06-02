@@ -12,7 +12,7 @@ using namespace SDL2pp;
 Bonus::Bonus(GameScreen& gameScreen,
              Pool<Bonus>& pool,
              const Scroller& scroller,
-             std::vector<Texture>& textures)
+             std::vector<MaskedTexture>& textures)
         : GameObject(Category::Bonus)
         , mGameScreen(gameScreen)
         , mPool(pool)
@@ -22,7 +22,8 @@ Bonus::Bonus(GameScreen& gameScreen,
 
 void Bonus::setup(int lane) {
     mActiveTexture = &Random::randomChoice(mTextures);
-    auto size = mActiveTexture->GetSize();
+    setMask(&mActiveTexture->mask);
+    auto size = mActiveTexture->texture.GetSize();
 
     // Update h before y to properly center the bonus
     mRect.w = size.x;
@@ -42,7 +43,7 @@ void Bonus::update(float /*delta*/) {
 }
 
 void Bonus::draw(SDL2pp::Renderer& renderer) {
-    renderer.Copy(*mActiveTexture, NullOpt, mRect);
+    renderer.Copy(mActiveTexture->texture, NullOpt, mRect);
 }
 
 void Bonus::onCaptured() {

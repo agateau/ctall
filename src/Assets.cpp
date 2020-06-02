@@ -22,9 +22,9 @@ static constexpr Point CHAR_SIZE = {18, 16};
 Assets::Assets(Renderer& renderer)
         : mBaseDir("images")
         , textTexture(load(renderer, "font"))
-        , player(load(renderer, "player"))
-        , wall(load(renderer, "wall"))
-        , bonuses(loadAll(renderer, "bonus"))
+        , player(loadMasked(renderer, "player"))
+        , wall(loadMasked(renderer, "wall"))
+        , bonuses(loadAllMasked(renderer, "bonus"))
         , textDrawer(textTexture, ALPHABET, CHAR_SIZE) {
     loadBackgrounds(renderer);
 }
@@ -62,13 +62,18 @@ Texture Assets::load(Renderer& renderer, const std::string& name) {
     return Texture(renderer, path);
 }
 
-std::vector<Texture> Assets::loadAll(Renderer& renderer, const std::string& dirName) {
+MaskedTexture Assets::loadMasked(Renderer& renderer, const std::string& name) {
+    auto path = mBaseDir + "/" + name + ".png";
+    return MaskedTexture(renderer, path);
+}
+
+std::vector<MaskedTexture> Assets::loadAllMasked(Renderer& renderer, const std::string& dirName) {
     auto dirPath = mBaseDir + "/" + dirName;
-    std::vector<Texture> vec;
+    std::vector<MaskedTexture> vec;
 
     for (const fs::directory_entry& entry : fs::directory_iterator(dirPath)) {
         if (entry.path().extension() == ".png") {
-            vec.emplace_back(Texture(renderer, entry.path()));
+            vec.emplace_back(MaskedTexture(renderer, entry.path()));
         }
     }
     return vec;

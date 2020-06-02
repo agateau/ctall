@@ -10,6 +10,8 @@ add_library(ctalllib STATIC
     Scroller.cpp
     StartScreen.cpp
     tools/App.cpp
+    tools/Mask.cpp
+    tools/MaskedTexture.cpp
     tools/Menu.cpp
     tools/Screen.cpp
     tools/TextDrawer.cpp

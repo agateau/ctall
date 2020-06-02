@@ -7,10 +7,11 @@
 
 struct Input;
 class GameScreen;
+class MaskedTexture;
 
 class Player : public GameObject {
 public:
-    Player(GameScreen& game, SDL2pp::Texture& texture, const Input& input);
+    Player(GameScreen& game, MaskedTexture& texture, const Input& input);
 
     void update(float delta) override;
 
@@ -26,7 +27,7 @@ private:
     void checkCollisions();
 
     GameScreen& mGameScreen;
-    SDL2pp::Texture& mTexture;
+    MaskedTexture& mTexture;
     const Input& mInput;
     int mCurrentLane = 0;
     int mTargetLane = 0;

@@ -7,12 +7,13 @@
 #include "ScrollComponent.h"
 
 class GameScreen;
+class MaskedTexture;
 
 template <class T> class Pool;
 
 class Wall : public GameObject {
 public:
-    Wall(GameScreen& game, Pool<Wall>& pool, const Scroller& scroller, SDL2pp::Texture& texture);
+    Wall(GameScreen& game, Pool<Wall>& pool, const Scroller& scroller, MaskedTexture& texture);
 
     void setup(int lane);
 
@@ -23,7 +24,7 @@ public:
 private:
     GameScreen& mGameScreen;
     Pool<Wall>& mPool;
-    SDL2pp::Texture& mTexture;
+    MaskedTexture& mTexture;
     ScrollComponent mScrollComponent;
 };
 

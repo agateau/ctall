@@ -3,19 +3,21 @@
 #include "Bonus.h"
 #include "GameScreen.h"
 #include "Input.h"
+#include "MaskedTexture.h"
 #include "constants.h"
 
 using namespace SDL2pp;
 
 static constexpr float MOVE_SPEED = 400;
 
-Player::Player(GameScreen& gameScreen, Texture& texture, const Input& input)
+Player::Player(GameScreen& gameScreen, MaskedTexture& texture, const Input& input)
         : GameObject(Category::Player), mGameScreen(gameScreen), mTexture(texture), mInput(input) {
-    auto point = mTexture.GetSize();
+    auto point = mTexture.texture.GetSize();
     mRect.w = point.x;
     mRect.h = point.y;
     mRect.x = 12;
     mRect.y = mGameScreen.yForLane(mCurrentLane) - mRect.h / 2;
+    setMask(&mTexture.mask);
 }
 
 void Player::update(float delta) {
@@ -25,7 +27,7 @@ void Player::update(float delta) {
 }
 
 void Player::draw(Renderer& renderer) {
-    renderer.Copy(mTexture, NullOpt, mRect);
+    renderer.Copy(mTexture.texture, NullOpt, mRect);
 }
 
 void Player::updateTargetLane() {
@@ -54,7 +56,7 @@ void Player::checkCollisions() {
     auto it = mGameScreen.activeGameObjects().begin();
     auto end = mGameScreen.activeGameObjects().end();
     for (;; ++it) {
-        it = GameObject::collide(*this, it, end);
+        it = GameObject::findCollision(*this, it, end);
         if (it == end) {
             break;
         }
