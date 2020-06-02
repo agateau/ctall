@@ -19,7 +19,7 @@ inline bool checkSegments(const std::vector<Mask::Segment>& segments1,
         it2 += offsetU;
     }
     auto end1 = segments1.cend();
-    auto end2 = segments1.cend();
+    auto end2 = segments2.cend();
     for (; it1 != end1 && it2 != end2; ++it1, ++it2) {
         if (!it1->has_value() || !it2->has_value()) {
             continue;
