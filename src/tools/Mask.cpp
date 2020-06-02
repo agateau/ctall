@@ -13,10 +13,10 @@ inline bool checkSegments(const std::vector<Mask::Segment>& segments1,
                           int offsetV) {
     auto it1 = segments1.cbegin();
     auto it2 = segments2.cbegin();
-    if (offsetU > 0) {
-        it1 += offsetU;
+    if (offsetV > 0) {
+        it1 += offsetV;
     } else {
-        it2 += offsetU;
+        it2 += offsetV;
     }
     auto end1 = segments1.cend();
     auto end2 = segments2.cend();
@@ -24,19 +24,21 @@ inline bool checkSegments(const std::vector<Mask::Segment>& segments1,
         if (!it1->has_value() || !it2->has_value()) {
             continue;
         }
-        auto [start1, end1] = it1->value();
-        auto [start2, end2] = it2->value();
-        start2 += offsetV;
-        end2 += offsetV;
-        if (start1 <= start2 && start2 < end1) {
+        auto [start1, stop1] = it1->value();
+        auto [start2, stop2] = it2->value();
+        start2 += offsetU;
+        stop2 += offsetU;
+        if (start1 <= start2 && start2 < stop1) {
             return true;
         }
-        if (start2 <= start1 && start1 < end2) {
+        if (start2 <= start1 && start1 < stop2) {
             return true;
         }
     }
     return false;
 }
+
+#include <iostream>
 
 bool Mask::collide(const Mask& mask1, const Mask& mask2, const SDL2pp::Point& offset) {
     return checkSegments(mask1.horizontalSegments(), mask2.horizontalSegments(), offset.x, offset.y)
@@ -73,13 +75,13 @@ Mask Mask::fromSurfaceAlpha(Surface& surface_) {
             mask.mHorizontalSegments.push_back({});
             continue;
         }
-        auto end = width - 1;
-        for (; end > start; --end) {
-            if (isFilled(end, y)) {
+        auto stop = width - 1;
+        for (; stop > start; --stop) {
+            if (isFilled(stop, y)) {
                 break;
             }
         }
-        Segment segment = std::pair{start, end + 1};
+        Segment segment = std::pair{start, stop + 1};
         mask.mHorizontalSegments.push_back(segment);
     }
 
@@ -94,13 +96,13 @@ Mask Mask::fromSurfaceAlpha(Surface& surface_) {
             mask.mVerticalSegments.push_back({});
             continue;
         }
-        auto end = height - 1;
-        for (; end > start; --end) {
-            if (isFilled(x, end)) {
+        auto stop = height - 1;
+        for (; stop > start; --stop) {
+            if (isFilled(x, stop)) {
                 break;
             }
         }
-        Segment segment = std::pair{start, end + 1};
+        Segment segment = std::pair{start, stop + 1};
         mask.mVerticalSegments.push_back(segment);
     }
 
