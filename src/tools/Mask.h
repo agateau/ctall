@@ -1,12 +1,12 @@
 #ifndef MASK_H
 #define MASK_H
 
-#include <string>
 #include <optional>
 #include <vector>
 
 namespace SDL2pp {
 class Point;
+class Surface;
 }
 
 class Mask {
@@ -17,7 +17,7 @@ public:
 
     static bool collide(const Mask& mask1, const Mask& mask2, const SDL2pp::Point& offset);
 
-    static Mask fromStrings(const std::vector<std::string>& strings);
+    static Mask fromSurfaceAlpha(SDL2pp::Surface& surface);
 
     const std::vector<Segment>& horizontalSegments() const {
         return mHorizontalSegments;

@@ -2,18 +2,15 @@
 
 #include <SDL2pp/SDL2pp.hh>
 
-// std
-#include <algorithm>
-#include <cassert>
-
-static constexpr char FILLED_CHAR = 'x';
+using namespace SDL2pp;
 
 Mask::Mask() {
 }
 
 inline bool checkSegments(const std::vector<Mask::Segment>& segments1,
                           const std::vector<Mask::Segment>& segments2,
-                          int offsetU, int offsetV) {
+                          int offsetU,
+                          int offsetV) {
     auto it1 = segments1.cbegin();
     auto it2 = segments2.cbegin();
     if (offsetU > 0) {
@@ -46,28 +43,50 @@ bool Mask::collide(const Mask& mask1, const Mask& mask2, const SDL2pp::Point& of
            && checkSegments(mask1.verticalSegments(), mask2.verticalSegments(), offset.y, offset.x);
 }
 
-Mask Mask::fromStrings(const std::vector<std::string>& strings) {
+Mask Mask::fromSurfaceAlpha(Surface& surface_) {
     Mask mask;
 
-    assert(!strings.empty());
-    auto width = strings.at(0).size();
-    auto height = strings.size();
+    const auto pixelFormat = SDL_PIXELFORMAT_RGBA8888;
+    Surface surface = surface_.Convert(pixelFormat);
 
-    for (const auto& line : strings) {
-        auto start = line.find(FILLED_CHAR);
-        if (start == std::string::npos) {
+    int bpp;
+    Uint32 rmask, gmask, bmask, amask;
+    SDL_PixelFormatEnumToMasks(pixelFormat, &bpp, &rmask, &gmask, &bmask, &amask);
+
+    Surface::LockHandle lock = surface.Lock();
+    auto [width, height] = surface.GetSize();
+
+    auto isFilled = [&lock, amask](int x, int y) {
+        auto pixelBytes = reinterpret_cast<Uint8*>(lock.GetPixels());
+        Uint32* pixel = reinterpret_cast<Uint32*>(pixelBytes + y * lock.GetPitch()) + x;
+        return (*pixel & amask) > 0;
+    };
+
+    for (int y = 0; y < height; ++y) {
+        int start = 0;
+        for (; start < width; ++start) {
+            if (isFilled(start, y)) {
+                break;
+            }
+        }
+        if (start == width) {
             mask.mHorizontalSegments.push_back({});
             continue;
         }
-        auto end = line.rfind(FILLED_CHAR);
+        auto end = width - 1;
+        for (; end > start; --end) {
+            if (isFilled(end, y)) {
+                break;
+            }
+        }
         Segment segment = std::pair{start, end + 1};
         mask.mHorizontalSegments.push_back(segment);
     }
 
-    for (std::size_t x = 0; x < width; ++x) {
-        std::size_t start = 0;
+    for (int x = 0; x < width; ++x) {
+        int start = 0;
         for (; start < height; ++start) {
-            if (strings.at(start).at(x) == FILLED_CHAR) {
+            if (isFilled(x, start)) {
                 break;
             }
         }
@@ -77,7 +96,7 @@ Mask Mask::fromStrings(const std::vector<std::string>& strings) {
         }
         auto end = height - 1;
         for (; end > start; --end) {
-            if (strings.at(end).at(x) == FILLED_CHAR) {
+            if (isFilled(x, end)) {
                 break;
             }
         }
