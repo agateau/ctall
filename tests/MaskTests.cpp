@@ -1,3 +1,4 @@
+#include <SDL2pp/SDL2pp.hh>
 #include <fstream>
 
 #include "Mask.h"
@@ -41,5 +42,31 @@ TEST_CASE("Mask::fromStrings") {
                                        "x x"});
         CHECK(mask.horizontalSegments() == vector{makeSegment(0, 3), {}, makeSegment(0, 3)});
         CHECK(mask.verticalSegments() == vector{makeSegment(0, 3), {}, makeSegment(0, 3)});
+    }
+}
+
+TEST_CASE("Mask::collide") {
+    Mask mask = Mask::fromStrings({"x   x", // A cross
+                                   " x x ",
+                                   "  x  ",
+                                   " x x ",
+                                   "x   x"});
+    SECTION("horizontal") {
+        REQUIRE(Mask::collide(mask, mask, {2, 0}));
+        REQUIRE(Mask::collide(mask, mask, {-2, 0}));
+    }
+    SECTION("vertical") {
+        REQUIRE(Mask::collide(mask, mask, {0, 2}));
+        REQUIRE(Mask::collide(mask, mask, {0, -2}));
+    }
+    SECTION("noHitHorizontal") {
+        // Top-left corner of 2nd mask is between the top-right and bottom-right corners of first
+        // mask
+        REQUIRE_FALSE(Mask::collide(mask, mask, {4, 2}));
+    }
+    SECTION("noHitVertical") {
+        // Top-left corner of 2nd mask is between the bottom-left and bottom-right corners of first
+        // mask
+        REQUIRE_FALSE(Mask::collide(mask, mask, {2, 4}));
     }
 }
