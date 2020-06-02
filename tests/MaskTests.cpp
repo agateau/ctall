@@ -78,7 +78,7 @@ TEST_CASE("Mask::fromSurfaceAlpha") {
     }
 }
 
-TEST_CASE("Mask::collide") {
+TEST_CASE("Mask::collideX") {
     Surface surface = surfaceFromStrings({"x   x", // A cross
                                           " x x ",
                                           "  x  ",
@@ -102,5 +102,38 @@ TEST_CASE("Mask::collide") {
         // Top-left corner of 2nd mask is between the bottom-left and bottom-right corners of first
         // mask
         REQUIRE_FALSE(Mask::collide(mask, mask, {2, 4}));
+    }
+}
+
+TEST_CASE("Mask::collideIU") {
+    Surface uSurface = surfaceFromStrings({"x x", // A U
+                                           "x x",
+                                           "xxx"});
+    Mask uMask = Mask::fromSurfaceAlpha(uSurface);
+
+    Surface iSurface = surfaceFromStrings({"x", // A I
+                                           "x"});
+    Mask iMask = Mask::fromSurfaceAlpha(iSurface);
+
+    SECTION("iInsideU") {
+        CHECK(Mask::collide(uMask, iMask, {0, 0}));
+        CHECK_FALSE(Mask::collide(uMask, iMask, {1, 0}));
+        CHECK(Mask::collide(uMask, iMask, {2, 0}));
+    }
+}
+
+TEST_CASE("Mask::collideC-") {
+    Surface cSurface = surfaceFromStrings({"xxx", // A C
+                                           "x  ",
+                                           "xxx"});
+    Mask cMask = Mask::fromSurfaceAlpha(cSurface);
+
+    Surface dashSurface = surfaceFromStrings({"xx"}); // A -
+    Mask dashMask = Mask::fromSurfaceAlpha(dashSurface);
+
+    SECTION("dashInsideU") {
+        CHECK(Mask::collide(cMask, dashMask, {1, 0}));
+        CHECK_FALSE(Mask::collide(cMask, dashMask, {1, 1}));
+        CHECK(Mask::collide(cMask, dashMask, {1, 2}));
     }
 }
