@@ -17,7 +17,7 @@ public:
 
     static bool collide(const Mask& mask1, const Mask& mask2, const SDL2pp::Point& offset);
 
-    static Mask fromSurfaceAlpha(SDL2pp::Surface& surface);
+    static Mask fromSurfaceAlpha(const SDL2pp::Surface& surface);
 
     const std::vector<Segment>& horizontalSegments() const {
         return mHorizontalSegments;

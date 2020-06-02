@@ -45,11 +45,11 @@ bool Mask::collide(const Mask& mask1, const Mask& mask2, const SDL2pp::Point& of
            && checkSegments(mask1.verticalSegments(), mask2.verticalSegments(), offset.y, offset.x);
 }
 
-Mask Mask::fromSurfaceAlpha(Surface& surface_) {
+Mask Mask::fromSurfaceAlpha(const Surface& surface_) {
     Mask mask;
 
     const auto pixelFormat = SDL_PIXELFORMAT_RGBA8888;
-    Surface surface = surface_.Convert(pixelFormat);
+    Surface surface = const_cast<Surface&>(surface_).Convert(pixelFormat);
 
     int bpp;
     Uint32 rmask, gmask, bmask, amask;
