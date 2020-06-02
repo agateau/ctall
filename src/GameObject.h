@@ -43,12 +43,13 @@ public:
 
 protected:
     void setActive(bool active);
+    void setMask(const Mask* mask);
 
     SDL2pp::Rect mRect;
     Category mCategory;
 
 private:
-    Mask* mMask = nullptr;
+    const Mask* mMask = nullptr;
     bool mActive = true;
 };
 

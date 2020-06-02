@@ -11,6 +11,7 @@ add_library(ctalllib STATIC
     StartScreen.cpp
     tools/App.cpp
     tools/Mask.cpp
+    tools/MaskedTexture.cpp
     tools/Menu.cpp
     tools/Screen.cpp
     tools/TextDrawer.cpp

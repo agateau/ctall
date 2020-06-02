@@ -4,6 +4,7 @@
 #include <SDL2pp/SDL2pp.hh>
 
 #include "GameObject.h"
+#include "MaskedTexture.h"
 #include "ScrollComponent.h"
 
 class GameScreen;
@@ -15,7 +16,7 @@ public:
     Bonus(GameScreen& game,
           Pool<Bonus>& pool,
           const Scroller& scroller,
-          std::vector<SDL2pp::Texture>& textures);
+          std::vector<MaskedTexture>& textures);
 
     void setup(int lane);
 
@@ -28,9 +29,9 @@ public:
 private:
     GameScreen& mGameScreen;
     Pool<Bonus>& mPool;
-    std::vector<SDL2pp::Texture>& mTextures;
+    std::vector<MaskedTexture>& mTextures;
     ScrollComponent mScrollComponent;
-    SDL2pp::Texture* mActiveTexture = nullptr;
+    MaskedTexture* mActiveTexture = nullptr;
 };
 
 #endif // BONUS_H

@@ -23,3 +23,7 @@ bool GameObject::collide(const GameObject& obj1, const GameObject& obj2) {
 void GameObject::setActive(bool active) {
     mActive = active;
 }
+
+void GameObject::setMask(const Mask* mask) {
+    mMask = mask;
+}

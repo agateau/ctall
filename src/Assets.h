@@ -4,6 +4,7 @@
 #include <SDL2pp/SDL2pp.hh>
 
 #include "Background.h"
+#include "MaskedTexture.h"
 #include "TextDrawer.h"
 
 struct Assets {
@@ -14,16 +15,17 @@ private:
 public:
     Assets(SDL2pp::Renderer& renderer);
 
-    SDL2pp::Texture player;
-    SDL2pp::Texture wall;
-    std::vector<SDL2pp::Texture> bonuses;
+    MaskedTexture player;
+    MaskedTexture wall;
+    std::vector<MaskedTexture> bonuses;
     std::vector<BackgroundAssets> backgrounds;
     TextDrawer textDrawer;
 
 private:
     void loadBackgrounds(SDL2pp::Renderer& renderer);
     SDL2pp::Texture load(SDL2pp::Renderer& renderer, const std::string& name);
-    std::vector<SDL2pp::Texture> loadAll(SDL2pp::Renderer& renderer, const std::string& dirName);
+    MaskedTexture loadMasked(SDL2pp::Renderer& renderer, const std::string& name);
+    std::vector<MaskedTexture> loadAllMasked(SDL2pp::Renderer& renderer, const std::string& dirName);
 };
 
 #endif // ASSETS_H
