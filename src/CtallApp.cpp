@@ -4,7 +4,8 @@
 #include "StartScreen.h"
 #include "constants.h"
 
-CtallApp::CtallApp() : App("Catch them all", SCREEN_WIDTH, SCREEN_HEIGHT), mAssets(renderer()) {
+CtallApp::CtallApp()
+        : App("Catch them all", SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_SCALE), mAssets(renderer()) {
 }
 
 void CtallApp::showStartScreen() {

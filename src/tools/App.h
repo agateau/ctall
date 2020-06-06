@@ -10,7 +10,7 @@ class Screen;
 
 class App {
 public:
-    App(const std::string& title, int width, int height);
+    App(const std::string& title, int width, int height, int scale);
 
     void setScreen(std::unique_ptr<Screen> screen);
 

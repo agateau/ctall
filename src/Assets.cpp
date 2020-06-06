@@ -17,7 +17,7 @@ static constexpr char ALPHABET[] = " !*+,-./0"
                                    "2[&\\]^_`'"
                                    "(){|}~   ";
 
-static constexpr Point CHAR_SIZE = {18, 16};
+static constexpr Point CHAR_SIZE = {9, 8};
 
 Assets::Assets(Renderer& renderer)
         : mBaseDir("images")
