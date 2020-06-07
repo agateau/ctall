@@ -71,7 +71,6 @@ void GameScreen::update(float delta) {
     // Do not use an iterator here since it might become invalid if mGameObjects is resized after
     // an addition
     for (int idx = int(mGameObjects.size() - 1); idx >= 0; --idx) {
-        assert(mGameObjects.at(idx)->isActive());
         mGameObjects.at(idx)->update(delta);
     }
     mGameObjects.erase(std::remove_if(mGameObjects.begin(),
@@ -82,6 +81,12 @@ void GameScreen::update(float delta) {
 
 void GameScreen::draw(Renderer& renderer) {
     mBackground.draw(renderer);
+
+    // Ensure game objects are drawn in the right order
+    std::sort(mGameObjects.begin(), mGameObjects.end(), [](const auto* o1, const auto* o2) {
+        return o1->rect().y < o2->rect().y;
+    });
+
     for (auto* object : mGameObjects) {
         object->draw(renderer);
     }
