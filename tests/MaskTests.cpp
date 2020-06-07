@@ -136,4 +136,10 @@ TEST_CASE("Mask::collideC-") {
         CHECK_FALSE(Mask::collide(cMask, dashMask, {1, 1}));
         CHECK(Mask::collide(cMask, dashMask, {1, 2}));
     }
+
+    SECTION("dashInsideUSwap") {
+        CHECK(Mask::collide(dashMask, cMask, {-1, 0}));
+        CHECK_FALSE(Mask::collide(dashMask, cMask, {-1, -1}));
+        CHECK(Mask::collide(dashMask, cMask, {-1, -2}));
+    }
 }

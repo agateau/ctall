@@ -16,10 +16,14 @@ inline bool checkSegments(const std::vector<Mask::Segment>& segments1,
     if (offsetV > 0) {
         it1 += offsetV;
     } else {
-        it2 += offsetV;
+        it2 += -offsetV;
     }
     auto end1 = segments1.cend();
     auto end2 = segments2.cend();
+    assert(it1 >= segments1.cbegin());
+    assert(it1 <= end1);
+    assert(it2 >= segments2.cbegin());
+    assert(it2 <= end2);
     for (; it1 != end1 && it2 != end2; ++it1, ++it2) {
         if (!it1->has_value() || !it2->has_value()) {
             continue;
@@ -37,8 +41,6 @@ inline bool checkSegments(const std::vector<Mask::Segment>& segments1,
     }
     return false;
 }
-
-#include <iostream>
 
 bool Mask::collide(const Mask& mask1, const Mask& mask2, const SDL2pp::Point& offset) {
     return checkSegments(mask1.horizontalSegments(), mask2.horizontalSegments(), offset.x, offset.y)
