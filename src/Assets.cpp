@@ -64,7 +64,12 @@ Texture Assets::load(Renderer& renderer, const std::string& name) {
 
 MaskedTexture Assets::loadMasked(Renderer& renderer, const std::string& name) {
     auto path = mBaseDir + "/" + name + ".png";
-    return MaskedTexture(renderer, path);
+    auto maskPath = mBaseDir + "/" + name + "-mask.png";
+    if (fs::is_regular_file(maskPath)) {
+        return MaskedTexture(renderer, path, maskPath);
+    } else {
+        return MaskedTexture(renderer, path);
+    }
 }
 
 std::vector<MaskedTexture> Assets::loadAllMasked(Renderer& renderer, const std::string& dirName) {
