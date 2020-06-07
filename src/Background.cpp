@@ -35,7 +35,7 @@ void Background::update() {
 
 void Background::draw(SDL2pp::Renderer& renderer) {
     int x = mOffset;
-    int startY = mGameScreen.yForLane(MIN_LANE - 1) - LANE_WIDTH / 2;
+    int startY = mGameScreen.yForLane(MIN_LANE - 1);
     for (auto& column : mColumns) {
         int y = startY;
         for (auto* texture : column) {

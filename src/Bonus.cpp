@@ -29,7 +29,7 @@ void Bonus::setup(int lane) {
     mRect.w = size.x;
     mRect.h = size.y;
     mRect.x = SCREEN_WIDTH;
-    mRect.y = mGameScreen.yForLane(lane) - mRect.h / 2;
+    mRect.y = mGameScreen.yForLane(lane) + (LANE_WIDTH - mRect.h) / 2;
     mScrollComponent.setup();
     setActive(true);
 }

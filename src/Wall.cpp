@@ -24,7 +24,7 @@ Wall::Wall(GameScreen& gameScreen,
 
 void Wall::setup(int lane) {
     mRect.x = SCREEN_WIDTH;
-    mRect.y = mGameScreen.yForLane(lane) - mRect.h / 2;
+    mRect.y = mGameScreen.yForLane(lane) - (mRect.h - LANE_WIDTH);
     mScrollComponent.setup();
     setActive(true);
 }

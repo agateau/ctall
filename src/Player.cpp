@@ -16,7 +16,7 @@ Player::Player(GameScreen& gameScreen, MaskedTexture& texture, const Input& inpu
     mRect.w = point.x;
     mRect.h = point.y;
     mRect.x = 12;
-    mRect.y = mGameScreen.yForLane(mCurrentLane) - mRect.h / 2;
+    mRect.y = mGameScreen.yForLane(mCurrentLane) + (LANE_WIDTH - mRect.h) / 2;
     setMask(&mTexture.mask);
 }
 
@@ -40,7 +40,7 @@ void Player::updateTargetLane() {
 }
 
 void Player::updateY(float delta) {
-    int targetY = mGameScreen.yForLane(mTargetLane) - mRect.h / 2;
+    int targetY = mGameScreen.yForLane(mTargetLane) + (LANE_WIDTH - mRect.h) / 2;
 
     if (mTargetLane < mCurrentLane) {
         mRect.y = std::max(targetY, mRect.y - int(MOVE_SPEED * delta));

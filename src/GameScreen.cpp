@@ -152,7 +152,7 @@ void GameScreen::onKeyReleased(const SDL_KeyboardEvent& event) {
 }
 
 int GameScreen::yForLane(int lane) const {
-    return SCREEN_HEIGHT / 2 + lane * LANE_WIDTH;
+    return SCREEN_HEIGHT / 2 + lane * LANE_WIDTH - LANE_WIDTH / 2;
 }
 
 const std::vector<GameObject*>& GameScreen::activeGameObjects() const {
