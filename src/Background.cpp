@@ -5,59 +5,73 @@
 #include "Random.h"
 #include "constants.h"
 
-using namespace SDL2pp;
+// std
+#include <iostream>
+#include <numeric>
 
-static constexpr int COLUMN_COUNT = SCREEN_WIDTH / LANE_WIDTH;
-static constexpr int LANE_COUNT = MAX_LANE - MIN_LANE + 1;
+using namespace SDL2pp;
+using std::size_t;
+
+static const size_t MIN_COLUMN_COUNT = int(ceil(double(SCREEN_WIDTH) / LANE_WIDTH)) + 2;
 
 Background::Background(GameScreen& gameScreen,
                        const Scroller& scroller,
-                       std::vector<BackgroundAssets>& levelAssets)
-        : mGameScreen(gameScreen), mScroller(scroller), mBackgroundAssets(levelAssets) {
-    for (int idx = 0; idx < COLUMN_COUNT + 2; ++idx) {
-        Column column(LANE_COUNT + 2); // +2 for borders
-        fillColumn(column);
-        mColumns.push_back(column);
-    }
+                       const SectionProvider& sectionProvider)
+        : mGameScreen(gameScreen), mScroller(scroller), mSectionProvider(sectionProvider) {
 }
 
 void Background::update() {
+    if (mSections.empty()) {
+        fillSectionList();
+    }
     int oldOffset = mOffset;
     mOffset = -int(mScroller.getPosition()) % LANE_WIDTH;
     if (mOffset <= oldOffset) {
         return;
     }
-    Column column = *mColumns.begin();
-    mColumns.pop_front();
-    fillColumn(column);
-    mColumns.push_back(column);
+    ++mColumnIndex;
+    if (mColumnIndex == mSections.front()->columns.size()) {
+        // We are done with the first section
+        mSections.pop_front();
+        mColumnIndex = 0;
+    }
+    fillSectionList();
+}
+
+/**
+ * Fill mSections until it has enough content to fill the screen
+ */
+void Background::fillSectionList() {
+    size_t totalColumns = std::accumulate(
+        mSections.cbegin(), mSections.cend(), 0, [](size_t value, const auto* section) {
+            return value + section->columns.size();
+        }) - mColumnIndex;
+    while (totalColumns < MIN_COLUMN_COUNT) {
+        const auto* section = mSectionProvider.getSection();
+        mSections.push_back(section);
+        totalColumns += section->columns.size();
+    }
 }
 
 void Background::draw(SDL2pp::Renderer& renderer) {
-    int x = mOffset;
     int startY = mGameScreen.yForLane(MIN_LANE - 1);
-    for (auto& column : mColumns) {
+    auto sectionIt = mSections.cbegin();
+
+    auto columnIt = (*sectionIt)->columns.cbegin();
+    for (size_t i = 0; i < mColumnIndex; ++i, ++columnIt) {
+    }
+
+    for (int x = mOffset; x < SCREEN_WIDTH; x += LANE_WIDTH) {
         int y = startY;
-        for (auto* texture : column) {
-            renderer.Copy(*texture, NullOpt, {x, y});
+        for (auto* texture : *columnIt) {
+            renderer.Copy(*const_cast<SDL2pp::Texture*>(texture), NullOpt, {x, y});
             y += LANE_WIDTH;
         }
-        x += LANE_WIDTH;
+        ++columnIt;
+        if (columnIt == (*sectionIt)->columns.cend()) {
+            ++sectionIt;
+            assert(sectionIt != mSections.cend());
+            columnIt = (*sectionIt)->columns.cbegin();
+        }
     }
-}
-
-void Background::setLevel(int level) {
-    mLevel = level;
-}
-
-void Background::fillColumn(Background::Column& column) const {
-    BackgroundAssets& assets = mBackgroundAssets.at(mLevel % mBackgroundAssets.size());
-    auto it = column.begin();
-    auto last = column.end() - 1;
-    *it = &assets.border;
-    ++it;
-    for (; it != last; ++it) {
-        *it = &Random::randomChoice(assets.roads);
-    }
-    *last = &assets.border;
 }

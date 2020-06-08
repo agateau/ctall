@@ -15,27 +15,35 @@ struct BackgroundAssets {
     std::vector<SDL2pp::Texture> roads;
 };
 
+struct Section {
+    using Column = std::vector<const SDL2pp::Texture*>;
+    const std::list<Column> columns;
+};
+
 class Background {
-    using Column = std::vector<SDL2pp::Texture*>;
 public:
+    class SectionProvider {
+    public:
+        virtual const Section* getSection() const = 0;
+    };
+
     Background(GameScreen& gameScreen,
                const Scroller& scroller,
-               std::vector<BackgroundAssets>& backgroundAssets);
+               const SectionProvider& sectionProvider);
 
     void update();
 
     void draw(SDL2pp::Renderer& renderer);
 
-    void setLevel(int level);
-
 private:
-    void fillColumn(Column& column) const;
+    void fillSectionList();
+
     GameScreen& mGameScreen;
     const Scroller& mScroller;
-    std::vector<BackgroundAssets>& mBackgroundAssets;
-    int mLevel = 0;
-    std::list<Column> mColumns;
+    const SectionProvider& mSectionProvider;
+    std::list<const Section*> mSections;
     int mOffset = 0;
+    std::size_t mColumnIndex = 0;
 };
 
 #endif // BACKGROUND_H

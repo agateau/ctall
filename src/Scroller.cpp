@@ -15,7 +15,6 @@ void Scroller::update(float delta) {
     int level = int(mPos / LEVEL_LENGTH);
     if (level > oldLevel) {
         mScrollSpeed *= LEVEL_SPEEDUP;
-        mListener.onLevelChanged(level);
     }
 }
 

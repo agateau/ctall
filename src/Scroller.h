@@ -9,7 +9,6 @@ public:
     public:
         virtual ~Listener();
         virtual void spawnThings() = 0;
-        virtual void onLevelChanged(int level) = 0;
     };
 
     Scroller(Listener& listener);

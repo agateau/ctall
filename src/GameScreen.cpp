@@ -13,6 +13,10 @@
 static constexpr int SCORE_ROUND = 100;
 static constexpr int SCORE_PER_CAPTURE = 1000;
 
+static constexpr int SECTION_COUNT = 10;
+static constexpr int MIN_SECTION_LENGTH = 4;
+static constexpr int MAX_SECTION_LENGTH = 15;
+
 using namespace SDL2pp;
 using namespace Random;
 
@@ -21,7 +25,7 @@ GameScreen::GameScreen(CtallApp& app)
         , mAssets(app.assets())
         , mPlayer(*this, mAssets.player, mAssets.playerUp, mAssets.playerDown, mInput)
         , mScroller(*this)
-        , mBackground(*this, mScroller, mAssets.backgrounds)
+        , mBackground(*this, mScroller, *this)
         , mWallPool([this]() { return new Wall(*this, mWallPool, mScroller, mAssets.wall); })
         , mBonusPool([this]() { return new Bonus(*this, mBonusPool, mScroller, mAssets.bonuses); })
         , mGameOverMenu(mAssets.textDrawer)
@@ -33,6 +37,8 @@ GameScreen::GameScreen(CtallApp& app)
 
     mPauseMenu.addItem("CONTINUE", [this] { mState = State::Running; });
     mPauseMenu.addItem("BACK TO MENU", [&app] { app.showStartScreen(); });
+
+    createSections();
 }
 
 GameScreen::~GameScreen() {
@@ -56,10 +62,6 @@ void GameScreen::spawnThings() {
         bonus->setup(bonusLane);
         mGameObjects.push_back(bonus);
     }
-}
-
-void GameScreen::onLevelChanged(int level) {
-    mBackground.setLevel(level);
 }
 
 void GameScreen::update(float delta) {
@@ -166,4 +168,32 @@ const std::vector<GameObject*>& GameScreen::activeGameObjects() const {
 
 void GameScreen::switchToGameOverState() {
     mState = State::GameOver;
+}
+
+const Section* GameScreen::getSection() const {
+    return &randomChoice(mSections);
+}
+
+/**
+ * At one point sections will be created from assets
+ */
+void GameScreen::createSections() {
+    for (int i = 0; i < SECTION_COUNT; ++i) {
+        std::list<Section::Column> columns;
+        int length = randomRange(MIN_SECTION_LENGTH, MAX_SECTION_LENGTH);
+        const auto& assets = randomChoice(mAssets.backgrounds);
+        for (int columnIdx = 0; columnIdx < length; ++columnIdx) {
+            Section::Column column(MAX_LANE - MIN_LANE + 1 + 2); // + 2 for borders
+            auto it = column.begin();
+            auto last = column.end() - 1;
+            *it = &assets.border;
+            ++it;
+            for (; it != last; ++it) {
+                *it = &Random::randomChoice(assets.roads);
+            }
+            *last = &assets.border;
+            columns.push_back(column);
+        }
+        mSections.emplace_back(Section{columns});
+    }
 }

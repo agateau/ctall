@@ -18,15 +18,11 @@ class Background;
 class CtallApp;
 class Assets;
 
-class GameScreen : public Screen, public Scroller::Listener {
+class GameScreen : public Screen, public Scroller::Listener, public Background::SectionProvider {
 public:
     GameScreen(CtallApp& app);
 
     ~GameScreen();
-
-    void spawnThings() override;
-
-    void onLevelChanged(int level) override;
 
     void update(float delta);
 
@@ -44,7 +40,14 @@ public:
 
     void switchToGameOverState();
 
+    // Scroller::Listener
+    void spawnThings() override;
+
+    // Background::SectionProvider
+    const Section* getSection() const override;
+
 private:
+    void createSections();
     void drawGameOverOverlay(SDL2pp::Renderer& renderer);
     void drawPauseOverlay(SDL2pp::Renderer& renderer);
     void drawHud(SDL2pp::Renderer& renderer);
@@ -54,6 +57,7 @@ private:
 
     CtallApp& mApp;
     Assets& mAssets;
+    std::vector<Section> mSections;
     Input mInput;
     Player mPlayer;
     Scroller mScroller;
