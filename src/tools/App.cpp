@@ -10,7 +10,9 @@
 #include <chrono>
 #include <thread>
 
-static constexpr int FPS = 60;
+using std::chrono::duration_cast;
+using std::chrono::microseconds;
+using std::chrono::duration;
 
 inline std::chrono::time_point<std::chrono::steady_clock> now() {
     return std::chrono::steady_clock::now();
@@ -51,18 +53,13 @@ void App::run() {
         mRenderer.Present();
     };
 
-    float delta = 1.0 / FPS;
-    auto nextTime = now();
+    auto previousTime = now();
     while (mRunning) {
         auto currentTime = now();
-        if (currentTime >= nextTime) {
-            nextTime += std::chrono::microseconds(int(1000 * delta));
-            loopStep(delta);
-        } else {
-            auto duration = nextTime - currentTime;
-            if (duration > std::chrono::microseconds(0)) {
-                std::this_thread::sleep_for(duration);
-            }
+        auto delta = duration_cast<duration<float>>(currentTime - previousTime);
+        if (delta.count() > 0) {
+            loopStep(delta.count());
+            previousTime = currentTime;
         }
     }
 }
