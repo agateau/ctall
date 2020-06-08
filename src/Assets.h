@@ -16,6 +16,8 @@ public:
     Assets(SDL2pp::Renderer& renderer);
 
     MaskedTexture player;
+    MaskedTexture playerDown;
+    MaskedTexture playerUp;
     MaskedTexture wall;
     std::vector<MaskedTexture> bonuses;
     std::vector<BackgroundAssets> backgrounds;

@@ -23,6 +23,8 @@ Assets::Assets(Renderer& renderer)
         : mBaseDir("images")
         , textTexture(load(renderer, "font"))
         , player(loadMasked(renderer, "player"))
+        , playerDown(loadMasked(renderer, "player-down"))
+        , playerUp(loadMasked(renderer, "player-up"))
         , wall(loadMasked(renderer, "wall"))
         , bonuses(loadAllMasked(renderer, "bonus"))
         , textDrawer(textTexture, ALPHABET, CHAR_SIZE) {

@@ -19,7 +19,7 @@ using namespace Random;
 GameScreen::GameScreen(CtallApp& app)
         : mApp(app)
         , mAssets(app.assets())
-        , mPlayer(*this, mAssets.player, mInput)
+        , mPlayer(*this, mAssets.player, mAssets.playerUp, mAssets.playerDown, mInput)
         , mScroller(*this)
         , mBackground(*this, mScroller, mAssets.backgrounds)
         , mWallPool([this]() { return new Wall(*this, mWallPool, mScroller, mAssets.wall); })

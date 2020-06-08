@@ -11,7 +11,11 @@ class MaskedTexture;
 
 class Player : public GameObject {
 public:
-    Player(GameScreen& game, MaskedTexture& texture, const Input& input);
+    Player(GameScreen& game,
+           MaskedTexture& texture,
+           MaskedTexture& upTexture,
+           MaskedTexture& downTexture,
+           const Input& input);
 
     void update(float delta) override;
 
@@ -24,10 +28,15 @@ public:
 private:
     void updateTargetLane();
     void updateY(float delta);
+    void updateTexture();
     void checkCollisions();
+    void setActiveTexture(MaskedTexture* texture);
 
     GameScreen& mGameScreen;
     MaskedTexture& mTexture;
+    MaskedTexture& mUpTexture;
+    MaskedTexture& mDownTexture;
+    MaskedTexture* mActiveTexture;
     const Input& mInput;
     int mCapturedCount = 0;
 };

@@ -1,12 +1,12 @@
 #include "Player.h"
 
+#include <algorithm>
+
 #include "Bonus.h"
 #include "GameScreen.h"
 #include "Input.h"
 #include "MaskedTexture.h"
 #include "constants.h"
-
-#include <algorithm>
 
 using namespace SDL2pp;
 
@@ -18,23 +18,30 @@ static constexpr int OFFSET_UP = 15;
 // Distance from top of sprite to bottom of board
 static constexpr int OFFSET_DOWN = 20;
 
-Player::Player(GameScreen& gameScreen, MaskedTexture& texture, const Input& input)
-        : GameObject(Category::Player), mGameScreen(gameScreen), mTexture(texture), mInput(input) {
-    auto point = mTexture.texture.GetSize();
-    mRect.w = point.x;
-    mRect.h = point.y;
+Player::Player(GameScreen& gameScreen,
+               MaskedTexture& texture,
+               MaskedTexture& upTexture,
+               MaskedTexture& downTexture,
+               const Input& input)
+        : GameObject(Category::Player)
+        , mGameScreen(gameScreen)
+        , mTexture(texture)
+        , mUpTexture(upTexture)
+        , mDownTexture(downTexture)
+        , mInput(input) {
+    setActiveTexture(&mTexture);
     mRect.x = 12;
     mRect.y = mGameScreen.yForLane(0) + (LANE_WIDTH - mRect.h) / 2;
-    setMask(&mTexture.mask);
 }
 
 void Player::update(float delta) {
     updateY(delta);
+    updateTexture();
     checkCollisions();
 }
 
 void Player::draw(Renderer& renderer) {
-    renderer.Copy(mTexture.texture, NullOpt, mRect);
+    renderer.Copy(mActiveTexture->texture, NullOpt, mRect);
 }
 
 void Player::updateY(float delta) {
@@ -45,6 +52,16 @@ void Player::updateY(float delta) {
     }
     if (mInput.up && mRect.y > minY) {
         mRect.y = std::max(int(mRect.y - MOVE_SPEED * delta), minY);
+    }
+}
+
+void Player::updateTexture() {
+    if (mInput.down) {
+        setActiveTexture(&mDownTexture);
+    } else if (mInput.up) {
+        setActiveTexture(&mUpTexture);
+    } else {
+        setActiveTexture(&mTexture);
     }
 }
 
@@ -67,4 +84,16 @@ void Player::checkCollisions() {
             bonus->onCaptured();
         }
     }
+}
+
+void Player::setActiveTexture(MaskedTexture* texture) {
+    if (mActiveTexture == texture) {
+        return;
+    }
+    assert(texture);
+    mActiveTexture = texture;
+    auto size = texture->texture.GetSize();
+    mRect.w = size.x;
+    mRect.h = size.y;
+    setMask(&mActiveTexture->mask);
 }
