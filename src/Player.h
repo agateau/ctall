@@ -29,8 +29,6 @@ private:
     GameScreen& mGameScreen;
     MaskedTexture& mTexture;
     const Input& mInput;
-    int mCurrentLane = 0;
-    int mTargetLane = 0;
     int mCapturedCount = 0;
 };
 
