@@ -7,7 +7,6 @@
 #include <SDL2pp/SDL2pp.hh>
 
 class World;
-class BackgroundAssets;
 class Scroller;
 
 struct BackgroundAssets {
@@ -16,7 +15,9 @@ struct BackgroundAssets {
 };
 
 struct Section {
-    using Column = std::vector<const SDL2pp::Texture*>;
+    struct Column {
+        const std::vector<const SDL2pp::Texture*> images;
+    };
     const std::vector<Column> columns;
 };
 

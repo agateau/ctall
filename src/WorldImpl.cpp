@@ -16,12 +16,10 @@ WorldImpl::WorldImpl(Assets& assets, const Input& input)
         : mScroller(*this)
         , mBackground(*this, mScroller, *this)
         , mPlayer(*this, assets.player, assets.playerUp, assets.playerDown, input)
-        , mWallPool([this, &assets]() {
-            return new Wall(*this, mWallPool, mScroller, assets.wall);
-        })
-        , mBonusPool([this, &assets]() {
-            return new Bonus(*this, mBonusPool, mScroller, assets.bonuses);
-        })
+        , mWallPool(
+              [this, &assets]() { return new Wall(*this, mWallPool, mScroller, assets.wall); })
+        , mBonusPool(
+              [this, &assets]() { return new Bonus(*this, mBonusPool, mScroller, assets.bonuses); })
         , mAssets(assets) {
     mGameObjects.push_back(&mPlayer);
 
@@ -32,21 +30,23 @@ WorldImpl::WorldImpl(Assets& assets, const Input& input)
  * At one point sections will be created from assets
  */
 void WorldImpl::createSections() {
+    // + 2 for borders
+    std::vector<const SDL2pp::Texture*> images(MAX_LANE - MIN_LANE + 1 + 2);
+
     for (int i = 0; i < SECTION_COUNT; ++i) {
         std::vector<Section::Column> columns;
         int length = randomRange(MIN_SECTION_LENGTH, MAX_SECTION_LENGTH);
         const auto& assets = randomChoice(mAssets.backgrounds);
         for (int columnIdx = 0; columnIdx < length; ++columnIdx) {
-            Section::Column column(MAX_LANE - MIN_LANE + 1 + 2); // + 2 for borders
-            auto it = column.begin();
-            auto last = column.end() - 1;
+            auto it = images.begin();
+            auto last = images.end() - 1;
             *it = &assets.border;
             ++it;
             for (; it != last; ++it) {
                 *it = &Random::randomChoice(assets.roads);
             }
             *last = &assets.border;
-            columns.push_back(column);
+            columns.emplace_back(Section::Column{images});
         }
         mSections.emplace_back(Section{columns});
     }

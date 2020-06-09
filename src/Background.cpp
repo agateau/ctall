@@ -64,7 +64,7 @@ void Background::draw(SDL2pp::Renderer& renderer) {
 
     for (int x = mOffset; x < SCREEN_WIDTH; x += LANE_WIDTH) {
         int y = startY;
-        for (auto* texture : *columnIt) {
+        for (auto* texture : columnIt->images) {
             renderer.Copy(*const_cast<SDL2pp::Texture*>(texture), NullOpt, {x, y});
             y += LANE_WIDTH;
         }
