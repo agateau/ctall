@@ -6,12 +6,12 @@
 #include "GameObject.h"
 
 struct Input;
-class GameScreen;
+class World;
 class MaskedTexture;
 
 class Player : public GameObject {
 public:
-    Player(GameScreen& game,
+    Player(World& world,
            MaskedTexture& texture,
            MaskedTexture& upTexture,
            MaskedTexture& downTexture,
@@ -32,7 +32,7 @@ private:
     void checkCollisions();
     void setActiveTexture(MaskedTexture* texture);
 
-    GameScreen& mGameScreen;
+    World& mWorld;
     MaskedTexture& mTexture;
     MaskedTexture& mUpTexture;
     MaskedTexture& mDownTexture;

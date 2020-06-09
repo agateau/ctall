@@ -2,19 +2,16 @@
 
 #include <SDL2pp/SDL2pp.hh>
 
-#include "GameScreen.h"
 #include "MaskedTexture.h"
 #include "Pool.h"
+#include "World.h"
 #include "constants.h"
 
 using namespace SDL2pp;
 
-Wall::Wall(GameScreen& gameScreen,
-           Pool<Wall>& pool,
-           const Scroller& scroller,
-           MaskedTexture& texture)
+Wall::Wall(const World& world, Pool<Wall>& pool, const Scroller& scroller, MaskedTexture& texture)
         : GameObject(Category::Bad)
-        , mGameScreen(gameScreen)
+        , mWorld(world)
         , mPool(pool)
         , mTexture(texture)
         , mScrollComponent(scroller, *this) {
@@ -24,7 +21,7 @@ Wall::Wall(GameScreen& gameScreen,
 
 void Wall::setup(int lane) {
     mRect.x = SCREEN_WIDTH;
-    mRect.y = mGameScreen.yForLane(lane) - (mRect.h - LANE_WIDTH);
+    mRect.y = mWorld.yForLane(lane) - (mRect.h - LANE_WIDTH);
     mScrollComponent.setup();
     setActive(true);
 }

@@ -6,7 +6,7 @@
 
 #include <SDL2pp/SDL2pp.hh>
 
-class GameScreen;
+class World;
 class BackgroundAssets;
 class Scroller;
 
@@ -27,7 +27,7 @@ public:
         virtual const Section* getSection() const = 0;
     };
 
-    Background(GameScreen& gameScreen,
+    Background(const World& world,
                const Scroller& scroller,
                const SectionProvider& sectionProvider);
 
@@ -38,7 +38,7 @@ public:
 private:
     void fillSectionList();
 
-    GameScreen& mGameScreen;
+    const World& mWorld;
     const Scroller& mScroller;
     const SectionProvider& mSectionProvider;
     std::list<const Section*> mSections;

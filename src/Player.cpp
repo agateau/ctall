@@ -3,9 +3,9 @@
 #include <algorithm>
 
 #include "Bonus.h"
-#include "GameScreen.h"
 #include "Input.h"
 #include "MaskedTexture.h"
+#include "World.h"
 #include "constants.h"
 
 using namespace SDL2pp;
@@ -18,20 +18,20 @@ static constexpr int OFFSET_UP = 15;
 // Distance from top of sprite to bottom of board
 static constexpr int OFFSET_DOWN = 20;
 
-Player::Player(GameScreen& gameScreen,
+Player::Player(World& world,
                MaskedTexture& texture,
                MaskedTexture& upTexture,
                MaskedTexture& downTexture,
                const Input& input)
         : GameObject(Category::Player)
-        , mGameScreen(gameScreen)
+        , mWorld(world)
         , mTexture(texture)
         , mUpTexture(upTexture)
         , mDownTexture(downTexture)
         , mInput(input) {
     setActiveTexture(&mTexture);
     mRect.x = 12;
-    mRect.y = mGameScreen.yForLane(0) + (LANE_WIDTH - mRect.h) / 2;
+    mRect.y = mWorld.yForLane(0) + (LANE_WIDTH - mRect.h) / 2;
 }
 
 void Player::update(float delta) {
@@ -45,8 +45,8 @@ void Player::draw(Renderer& renderer) {
 }
 
 void Player::updateY(float delta) {
-    const int minY = mGameScreen.yForLane(MIN_LANE) - OFFSET_UP;
-    const int maxY = mGameScreen.yForLane(MAX_LANE + 1) - OFFSET_DOWN;
+    const int minY = mWorld.yForLane(MIN_LANE) - OFFSET_UP;
+    const int maxY = mWorld.yForLane(MAX_LANE + 1) - OFFSET_DOWN;
     if (mInput.down && mRect.y < maxY) {
         mRect.y = std::min(int(mRect.y + MOVE_SPEED * delta), maxY);
     }
@@ -66,8 +66,8 @@ void Player::updateTexture() {
 }
 
 void Player::checkCollisions() {
-    auto it = mGameScreen.activeGameObjects().begin();
-    auto end = mGameScreen.activeGameObjects().end();
+    auto it = mWorld.gameObjects().begin();
+    auto end = mWorld.gameObjects().end();
     for (;; ++it) {
         it = GameObject::findCollision(*this, it, end);
         if (it == end) {
@@ -76,7 +76,7 @@ void Player::checkCollisions() {
         auto* object = *it;
         auto category = object->category();
         if (category == GameObject::Category::Bad) {
-            mGameScreen.switchToGameOverState();
+            mWorld.switchToGameOverState();
             return;
         } else if (category == GameObject::Category::Bonus) {
             auto bonus = static_cast<Bonus*>(object);

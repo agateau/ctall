@@ -13,32 +13,40 @@
 #include "Screen.h"
 #include "Scroller.h"
 #include "Wall.h"
+#include "World.h"
 
 class Background;
 class CtallApp;
 class Assets;
 
-class GameScreen : public Screen, public Scroller::Listener, public Background::SectionProvider {
+class WorldImpl : public World, public Scroller::Listener, public Background::SectionProvider {
 public:
-    GameScreen(CtallApp& app);
+    enum class State { Running, Paused, GameOver };
 
-    ~GameScreen();
+    WorldImpl(Assets& assets, const Input& input);
 
     void update(float delta);
 
-    void draw(SDL2pp::Renderer& renderer);
+    int score() const;
 
-    void onEvent(const SDL_Event& event) override;
+    Background& getBackground() {
+        return mBackground;
+    }
 
-    void onKeyPressed(const SDL_KeyboardEvent& event) override;
+    State state() const;
 
-    void onKeyReleased(const SDL_KeyboardEvent& event) override;
+    void switchToPauseState();
 
-    int yForLane(int lane) const;
+    void switchToRunningState();
 
-    const std::vector<GameObject*>& activeGameObjects() const;
+    // World
+    int yForLane(int lane) const override;
 
-    void switchToGameOverState();
+    const std::vector<GameObject*>& gameObjects() const override {
+        return mGameObjects;
+    }
+
+    void switchToGameOverState() override;
 
     // Scroller::Listener
     void spawnThings() override;
@@ -48,26 +56,46 @@ public:
 
 private:
     void createSections();
+
+    Scroller mScroller;
+    Background mBackground;
+    Player mPlayer;
+    Pool<Wall> mWallPool;
+    Pool<Bonus> mBonusPool;
+    Assets& mAssets;
+    std::vector<GameObject*> mGameObjects;
+    std::vector<Section> mSections;
+
+    State mState = State::Running;
+};
+
+class GameScreen : public Screen {
+public:
+    GameScreen(CtallApp& app);
+
+    ~GameScreen();
+
+    void update(float delta) override;
+
+    void draw(SDL2pp::Renderer& renderer) override;
+
+    void onEvent(const SDL_Event& event) override;
+
+    void onKeyPressed(const SDL_KeyboardEvent& event) override;
+
+    void onKeyReleased(const SDL_KeyboardEvent& event) override;
+
+private:
     void drawGameOverOverlay(SDL2pp::Renderer& renderer);
     void drawPauseOverlay(SDL2pp::Renderer& renderer);
     void drawHud(SDL2pp::Renderer& renderer);
-    int score() const;
-
-    enum class State { Running, Paused, GameOver };
 
     CtallApp& mApp;
     Assets& mAssets;
-    std::vector<Section> mSections;
+    WorldImpl mWorld;
     Input mInput;
-    Player mPlayer;
-    Scroller mScroller;
-    Background mBackground;
-    Pool<Wall> mWallPool;
-    Pool<Bonus> mBonusPool;
     Menu mGameOverMenu;
     Menu mPauseMenu;
-    std::vector<GameObject*> mGameObjects;
-    State mState = State::Running;
 };
 
 #endif // GAME_H

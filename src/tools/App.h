@@ -11,6 +11,7 @@ class Screen;
 class App {
 public:
     App(const std::string& title, int width, int height, int scale);
+    ~App();
 
     void setScreen(std::unique_ptr<Screen> screen);
 

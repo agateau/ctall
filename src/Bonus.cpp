@@ -2,19 +2,19 @@
 
 #include <SDL2pp/SDL2pp.hh>
 
-#include "GameScreen.h"
 #include "Pool.h"
 #include "Random.h"
+#include "World.h"
 #include "constants.h"
 
 using namespace SDL2pp;
 
-Bonus::Bonus(GameScreen& gameScreen,
+Bonus::Bonus(const World& world,
              Pool<Bonus>& pool,
              const Scroller& scroller,
              std::vector<MaskedTexture>& textures)
         : GameObject(Category::Bonus)
-        , mGameScreen(gameScreen)
+        , mWorld(world)
         , mPool(pool)
         , mTextures(textures)
         , mScrollComponent(scroller, *this) {
@@ -29,7 +29,7 @@ void Bonus::setup(int lane) {
     mRect.w = size.x;
     mRect.h = size.y;
     mRect.x = SCREEN_WIDTH;
-    mRect.y = mGameScreen.yForLane(lane) + (LANE_WIDTH - mRect.h) / 2;
+    mRect.y = mWorld.yForLane(lane) + (LANE_WIDTH - mRect.h) / 2;
     mScrollComponent.setup();
     setActive(true);
 }

@@ -1,8 +1,9 @@
 #include "Background.h"
 
 #include "Assets.h"
-#include "GameScreen.h"
 #include "Random.h"
+#include "Scroller.h"
+#include "World.h"
 #include "constants.h"
 
 // std
@@ -14,10 +15,10 @@ using std::size_t;
 
 static const size_t MIN_COLUMN_COUNT = int(ceil(double(SCREEN_WIDTH) / LANE_WIDTH)) + 2;
 
-Background::Background(GameScreen& gameScreen,
+Background::Background(const World& world,
                        const Scroller& scroller,
                        const SectionProvider& sectionProvider)
-        : mGameScreen(gameScreen), mScroller(scroller), mSectionProvider(sectionProvider) {
+        : mWorld(world), mScroller(scroller), mSectionProvider(sectionProvider) {
 }
 
 void Background::update() {
@@ -42,10 +43,13 @@ void Background::update() {
  * Fill mSections until it has enough content to fill the screen
  */
 void Background::fillSectionList() {
-    size_t totalColumns = std::accumulate(
-        mSections.cbegin(), mSections.cend(), 0, [](size_t value, const auto* section) {
-            return value + section->columns.size();
-        }) - mColumnIndex;
+    size_t totalColumns = std::accumulate(mSections.cbegin(),
+                                          mSections.cend(),
+                                          0,
+                                          [](size_t value, const auto* section) {
+                                              return value + section->columns.size();
+                                          })
+                          - mColumnIndex;
     while (totalColumns < MIN_COLUMN_COUNT) {
         const auto* section = mSectionProvider.getSection();
         mSections.push_back(section);
@@ -54,7 +58,7 @@ void Background::fillSectionList() {
 }
 
 void Background::draw(SDL2pp::Renderer& renderer) {
-    int startY = mGameScreen.yForLane(MIN_LANE - 1);
+    int startY = mWorld.yForLane(MIN_LANE - 1);
     auto sectionIt = mSections.cbegin();
 
     auto columnIt = (*sectionIt)->columns.cbegin();

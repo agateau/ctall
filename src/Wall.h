@@ -6,14 +6,14 @@
 #include "GameObject.h"
 #include "ScrollComponent.h"
 
-class GameScreen;
+class World;
 class MaskedTexture;
 
 template <class T> class Pool;
 
 class Wall : public GameObject {
 public:
-    Wall(GameScreen& game, Pool<Wall>& pool, const Scroller& scroller, MaskedTexture& texture);
+    Wall(const World& world, Pool<Wall>& pool, const Scroller& scroller, MaskedTexture& texture);
 
     void setup(int lane);
 
@@ -22,7 +22,7 @@ public:
     void draw(SDL2pp::Renderer& renderer) override;
 
 private:
-    GameScreen& mGameScreen;
+    const World& mWorld;
     Pool<Wall>& mPool;
     MaskedTexture& mTexture;
     ScrollComponent mScrollComponent;

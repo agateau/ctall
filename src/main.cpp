@@ -3,7 +3,6 @@
 #include <SDL2pp/SDL2pp.hh>
 
 #include "CtallApp.h"
-#include "GameScreen.h"
 
 using namespace SDL2pp;
 

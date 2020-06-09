@@ -10,9 +10,9 @@
 #include <chrono>
 #include <thread>
 
+using std::chrono::duration;
 using std::chrono::duration_cast;
 using std::chrono::microseconds;
-using std::chrono::duration;
 
 inline std::chrono::time_point<std::chrono::steady_clock> now() {
     return std::chrono::steady_clock::now();
@@ -28,6 +28,8 @@ App::App(const std::string& title, int width, int height, int scale)
         , mRenderer(mWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC) {
     mRenderer.SetScale(scale, scale);
 }
+
+App::~App() = default;
 
 void App::setScreen(std::unique_ptr<Screen> screen) {
     mScreen = std::move(screen);
