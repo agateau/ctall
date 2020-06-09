@@ -6,12 +6,18 @@
 
 namespace Random {
 
+/**
+ * Return a value between min included and max excluded
+ */
 template<class T>
 T randomRange(T min, T max) {
     int value = std::rand();
     return min + T(value) % (max - min);
 }
 
+/**
+ * Return a value between 0 included and max excluded
+ */
 template<class T>
 T randomRange(T max) {
     return randomRange(T(0), max);
