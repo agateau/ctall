@@ -13,16 +13,15 @@ template <class T> class Pool;
 
 class Wall : public GameObject {
 public:
-    Wall(const World& world, Pool<Wall>& pool, const Scroller& scroller, MaskedTexture& texture);
+    Wall(Pool<Wall>& pool, const Scroller& scroller, MaskedTexture& texture);
 
-    void setup(int lane);
+    void setup(const SDL2pp::Point& pos);
 
     void update(float delta) override;
 
     void draw(SDL2pp::Renderer& renderer) override;
 
 private:
-    const World& mWorld;
     Pool<Wall>& mPool;
     MaskedTexture& mTexture;
     ScrollComponent mScrollComponent;

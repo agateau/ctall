@@ -9,18 +9,16 @@
 
 using namespace SDL2pp;
 
-Bonus::Bonus(const World& world,
-             Pool<Bonus>& pool,
+Bonus::Bonus(Pool<Bonus>& pool,
              const Scroller& scroller,
              std::vector<MaskedTexture>& textures)
         : GameObject(Category::Bonus)
-        , mWorld(world)
         , mPool(pool)
         , mTextures(textures)
         , mScrollComponent(scroller, *this) {
 }
 
-void Bonus::setup(int lane) {
+void Bonus::setup(const Point& pos) {
     mActiveTexture = &Random::randomChoice(mTextures);
     setMask(&mActiveTexture->mask);
     auto size = mActiveTexture->texture.GetSize();
@@ -28,8 +26,8 @@ void Bonus::setup(int lane) {
     // Update h before y to properly center the bonus
     mRect.w = size.x;
     mRect.h = size.y;
-    mRect.x = SCREEN_WIDTH;
-    mRect.y = mWorld.yForLane(lane) + (LANE_WIDTH - mRect.h) / 2;
+    mRect.x = pos.x + (LANE_WIDTH - mRect.w) / 2;
+    mRect.y = pos.y + (LANE_WIDTH - mRect.h) / 2;
     mScrollComponent.setup();
     setActive(true);
 }

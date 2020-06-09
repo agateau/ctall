@@ -7,11 +7,13 @@
 #include "World.h"
 #include "constants.h"
 
+// std
+#include <iostream>
+
 using namespace SDL2pp;
 
-Wall::Wall(const World& world, Pool<Wall>& pool, const Scroller& scroller, MaskedTexture& texture)
+Wall::Wall(Pool<Wall>& pool, const Scroller& scroller, MaskedTexture& texture)
         : GameObject(Category::Bad)
-        , mWorld(world)
         , mPool(pool)
         , mTexture(texture)
         , mScrollComponent(scroller, *this) {
@@ -19,9 +21,9 @@ Wall::Wall(const World& world, Pool<Wall>& pool, const Scroller& scroller, Maske
     setMask(&mTexture.mask);
 }
 
-void Wall::setup(int lane) {
-    mRect.x = SCREEN_WIDTH;
-    mRect.y = mWorld.yForLane(lane) - (mRect.h - LANE_WIDTH);
+void Wall::setup(const SDL2pp::Point& pos) {
+    mRect.x = pos.x;
+    mRect.y = pos.y + LANE_WIDTH - mRect.h;
     mScrollComponent.setup();
     setActive(true);
 }

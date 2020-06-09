@@ -2,21 +2,23 @@
 #define WORLDIMPL_H
 
 #include "Background.h"
-#include "Bonus.h"
 #include "Input.h"
 #include "Player.h"
-#include "Pool.h"
 #include "Scroller.h"
-#include "Wall.h"
 #include "World.h"
 
-class Assets;
+// std
+#include <memory>
 
-class WorldImpl : public World, public Scroller::Listener, public Background::SectionProvider {
+class Assets;
+class Trigger;
+
+class WorldImpl : public World, public Background::SectionProvider {
 public:
     enum class State { Running, Paused, GameOver };
 
     WorldImpl(Assets& assets, const Input& input);
+    ~WorldImpl();
 
     void update(float delta);
 
@@ -39,23 +41,23 @@ public:
         return mGameObjects;
     }
 
-    void switchToGameOverState() override;
+    void addGameObject(GameObject* gameObject);
 
-    // Scroller::Listener
-    void spawnThings() override;
+    void switchToGameOverState() override;
 
     // Background::SectionProvider
     const Section* getSection() const override;
 
 private:
     void createSections();
+    void fillTriggers(std::vector<const Trigger*>& triggers);
 
     Scroller mScroller;
     Background mBackground;
     Player mPlayer;
-    Pool<Wall> mWallPool;
-    Pool<Bonus> mBonusPool;
     Assets& mAssets;
+    const std::unique_ptr<Trigger> mWallTrigger;
+    const std::unique_ptr<Trigger> mBonusTrigger;
     std::vector<GameObject*> mGameObjects;
     std::vector<Section> mSections;
 

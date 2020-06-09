@@ -14,12 +14,24 @@ struct BackgroundAssets {
     std::vector<SDL2pp::Texture> roads;
 };
 
+/**
+ * Triggers something when the cell is about to become visible
+ */
+class Trigger {
+public:
+    virtual ~Trigger();
+    virtual void exec(World& world, const SDL2pp::Point& position) const = 0;
+};
+
 struct Section {
     struct Column {
         const std::vector<const SDL2pp::Texture*> images;
+        const std::vector<const Trigger*> triggers;
     };
     const std::vector<Column> columns;
 };
+
+using SectionList = std::list<const Section*>;
 
 class Background {
 public:
@@ -28,7 +40,7 @@ public:
         virtual const Section* getSection() const = 0;
     };
 
-    Background(const World& world,
+    Background(World& world,
                const Scroller& scroller,
                const SectionProvider& sectionProvider);
 
@@ -39,10 +51,10 @@ public:
 private:
     void fillSectionList();
 
-    const World& mWorld;
+    World& mWorld;
     const Scroller& mScroller;
     const SectionProvider& mSectionProvider;
-    std::list<const Section*> mSections;
+    SectionList mSections;
     int mOffset = 0;
     std::size_t mColumnIndex = 0;
 };

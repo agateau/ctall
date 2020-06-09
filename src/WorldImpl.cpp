@@ -1,7 +1,10 @@
 #include "WorldImpl.h"
 
 #include "Assets.h"
+#include "Bonus.h"
+#include "Pool.h"
 #include "Random.h"
+#include "Wall.h"
 
 static constexpr int SECTION_COUNT = 10;
 static constexpr int MIN_SECTION_LENGTH = 4;
@@ -10,21 +13,59 @@ static constexpr int MAX_SECTION_LENGTH = 15;
 static constexpr int SCORE_ROUND = 100;
 static constexpr int SCORE_PER_CAPTURE = 1000;
 
+using namespace std;
 using namespace Random;
+using namespace SDL2pp;
+
+class WallTrigger : public Trigger {
+public:
+    WallTrigger(Assets& assets, const Scroller& scroller)
+            : mPool(
+                [this, &scroller, &assets]() { return new Wall(mPool, scroller, assets.wall); }) {
+    }
+
+    ~WallTrigger() = default;
+
+    void exec(World& world, const Point& pos) const override {
+        auto wall = mPool.get();
+        wall->setup(pos);
+        world.addGameObject(wall);
+    }
+
+    mutable Pool<Wall> mPool;
+};
+
+class BonusTrigger : public Trigger {
+public:
+    BonusTrigger(Assets& assets, const Scroller& scroller)
+            : mPool([this, &scroller, &assets]() {
+                return new Bonus(mPool, scroller, assets.bonuses);
+            }) {
+    }
+
+    ~BonusTrigger() = default;
+
+    void exec(World& world, const Point& pos) const override {
+        auto bonus = mPool.get();
+        bonus->setup(pos);
+        world.addGameObject(bonus);
+    }
+
+private:
+    mutable Pool<Bonus> mPool;
+};
 
 WorldImpl::WorldImpl(Assets& assets, const Input& input)
-        : mScroller(*this)
-        , mBackground(*this, mScroller, *this)
+        : mBackground(*this, mScroller, *this)
         , mPlayer(*this, assets.player, assets.playerUp, assets.playerDown, input)
-        , mWallPool(
-              [this, &assets]() { return new Wall(*this, mWallPool, mScroller, assets.wall); })
-        , mBonusPool(
-              [this, &assets]() { return new Bonus(*this, mBonusPool, mScroller, assets.bonuses); })
-        , mAssets(assets) {
+        , mAssets(assets)
+        , mWallTrigger(make_unique<WallTrigger>(assets, mScroller))
+        , mBonusTrigger(make_unique<BonusTrigger>(assets, mScroller)) {
     mGameObjects.push_back(&mPlayer);
-
     createSections();
 }
+
+WorldImpl::~WorldImpl() = default;
 
 /**
  * At one point sections will be created from assets
@@ -32,6 +73,7 @@ WorldImpl::WorldImpl(Assets& assets, const Input& input)
 void WorldImpl::createSections() {
     // + 2 for borders
     std::vector<const SDL2pp::Texture*> images(MAX_LANE - MIN_LANE + 1 + 2);
+    std::vector<const Trigger*> triggers(MAX_LANE - MIN_LANE + 1 + 2);
 
     for (int i = 0; i < SECTION_COUNT; ++i) {
         std::vector<Section::Column> columns;
@@ -46,29 +88,32 @@ void WorldImpl::createSections() {
                 *it = &Random::randomChoice(assets.roads);
             }
             *last = &assets.border;
-            columns.emplace_back(Section::Column{images});
+
+            std::fill(triggers.begin(), triggers.end(), nullptr);
+            if (columnIdx % SPAWN_SPACING == 0) {
+                fillTriggers(triggers);
+            }
+
+            columns.emplace_back(Section::Column{images, triggers});
         }
         mSections.emplace_back(Section{columns});
     }
 }
 
-void WorldImpl::spawnThings() {
-    int wallLane = MIN_LANE - 1;
+void WorldImpl::fillTriggers(std::vector<const Trigger*>& triggers) {
+    int wallLane = -1;
+    int maxLane = int(triggers.size() - 1);
     if (randomBool() == 0) {
-        auto wall = mWallPool.get();
-        wallLane = randomRange(MIN_LANE, MAX_LANE + 1);
-        wall->setup(wallLane);
-        mGameObjects.push_back(wall);
+        wallLane = randomRange(1, maxLane);
+        triggers[wallLane] = mWallTrigger.get();
     }
 
     if (randomRange(4) == 0) {
-        auto bonus = mBonusPool.get();
         int bonusLane = wallLane;
         while (bonusLane == wallLane) {
-            bonusLane = randomRange(MIN_LANE, MAX_LANE + 1);
+            bonusLane = randomRange(1, maxLane);
         }
-        bonus->setup(bonusLane);
-        mGameObjects.push_back(bonus);
+        triggers[bonusLane] = mBonusTrigger.get();
     }
 }
 
@@ -114,6 +159,10 @@ void WorldImpl::switchToGameOverState() {
 
 int WorldImpl::yForLane(int lane) const {
     return SCREEN_HEIGHT / 2 + lane * LANE_WIDTH - LANE_WIDTH / 2;
+}
+
+void WorldImpl::addGameObject(GameObject* gameObject) {
+    mGameObjects.push_back(gameObject);
 }
 
 const Section* WorldImpl::getSection() const {

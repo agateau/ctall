@@ -13,12 +13,11 @@ template <class T> class Pool;
 
 class Bonus : public GameObject {
 public:
-    Bonus(const World& world,
-          Pool<Bonus>& pool,
+    Bonus(Pool<Bonus>& pool,
           const Scroller& scroller,
           std::vector<MaskedTexture>& textures);
 
-    void setup(int lane);
+    void setup(const SDL2pp::Point& pos);
 
     void update(float delta) override;
 
@@ -27,7 +26,6 @@ public:
     void onCaptured();
 
 private:
-    const World& mWorld;
     Pool<Bonus>& mPool;
     std::vector<MaskedTexture>& mTextures;
     ScrollComponent mScrollComponent;

@@ -16,6 +16,8 @@ public:
 
     virtual const std::vector<GameObject*>& gameObjects() const = 0;
 
+    virtual void addGameObject(GameObject*) = 0;
+
     virtual void switchToGameOverState() = 0;
 };
 

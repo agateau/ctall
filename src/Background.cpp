@@ -15,7 +15,56 @@ using std::size_t;
 
 static const size_t MIN_COLUMN_COUNT = int(ceil(double(SCREEN_WIDTH) / LANE_WIDTH)) + 2;
 
-Background::Background(const World& world,
+/**
+ * An iterator to iterate over columns stored in a list of sections.
+ * Not STL compliant: it asserts if it goes past the end of the columns, among other differences.
+ */
+class ColumnIterator {
+public:
+    ColumnIterator(const SectionList& sections)
+            : mSections(sections), mSectionIt(sections.cbegin()) {
+    }
+
+    const Section::Column& operator*() const {
+        return (*mSectionIt)->columns.at(mColumnIndex);
+    }
+
+    const Section::Column* operator->() const {
+        return &(*mSectionIt)->columns.at(mColumnIndex);
+    }
+
+    void operator++() {
+        ++mColumnIndex;
+        if (mColumnIndex == (*mSectionIt)->columns.size()) {
+            ++mSectionIt;
+            assert(mSectionIt != mSections.cend());
+            mColumnIndex = 0;
+        }
+    }
+
+    void operator+=(size_t offset) {
+        mColumnIndex += offset;
+        while (true) {
+            auto sectionSize = (*mSectionIt)->columns.size();
+            if (mColumnIndex < sectionSize) {
+                return;
+            } else {
+                ++mSectionIt;
+                assert(mSectionIt != mSections.cend());
+                mColumnIndex -= sectionSize;
+            }
+        }
+    }
+
+private:
+    const std::list<const Section*>& mSections;
+    SectionList::const_iterator mSectionIt;
+    size_t mColumnIndex = 0;
+};
+
+Trigger::~Trigger() = default;
+
+Background::Background(World& world,
                        const Scroller& scroller,
                        const SectionProvider& sectionProvider)
         : mWorld(world), mScroller(scroller), mSectionProvider(sectionProvider) {
@@ -37,6 +86,16 @@ void Background::update() {
         mColumnIndex = 0;
     }
     fillSectionList();
+
+    ColumnIterator columnIt(mSections);
+    columnIt += mColumnIndex + MIN_COLUMN_COUNT - 1;
+    Point pos(int((MIN_COLUMN_COUNT - 1) * LANE_WIDTH), mWorld.yForLane(MIN_LANE - 1));
+    for (auto* trigger : columnIt->triggers) {
+        if (trigger) {
+            trigger->exec(mWorld, pos);
+        }
+        pos.y += LANE_WIDTH;
+    }
 }
 
 /**
@@ -59,20 +118,14 @@ void Background::fillSectionList() {
 
 void Background::draw(SDL2pp::Renderer& renderer) {
     int startY = mWorld.yForLane(MIN_LANE - 1);
-    auto sectionIt = mSections.cbegin();
-    auto columnIt = (*sectionIt)->columns.cbegin() + mColumnIndex;
+    ColumnIterator columnIt(mSections);
+    columnIt += mColumnIndex;
 
-    for (int x = mOffset; x < SCREEN_WIDTH; x += LANE_WIDTH) {
+    for (int x = mOffset; x < SCREEN_WIDTH; x += LANE_WIDTH, ++columnIt) {
         int y = startY;
         for (auto* texture : columnIt->images) {
             renderer.Copy(*const_cast<SDL2pp::Texture*>(texture), NullOpt, {x, y});
             y += LANE_WIDTH;
-        }
-        ++columnIt;
-        if (columnIt == (*sectionIt)->columns.cend()) {
-            ++sectionIt;
-            assert(sectionIt != mSections.cend());
-            columnIt = (*sectionIt)->columns.cbegin();
         }
     }
 }

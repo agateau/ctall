@@ -10,7 +10,7 @@ static constexpr int MAX_LANE = 2;
 static constexpr int LANE_WIDTH = 32;
 
 static constexpr float START_SCROLL_SPEED = 200;
-static constexpr int SPAWN_SPACING = 100;
+static constexpr int SPAWN_SPACING = 3;
 
 static constexpr float LEVEL_LENGTH = 2000;
 static constexpr float LEVEL_SPEEDUP = 1.1;
