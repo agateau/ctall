@@ -17,6 +17,7 @@ add_library(ctalllib STATIC
     tools/TextDrawer.cpp
     Wall.cpp
     World.cpp
+    WorldImpl.cpp
 )
 
 target_include_directories(ctalllib PUBLIC
