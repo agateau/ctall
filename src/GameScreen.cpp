@@ -41,7 +41,7 @@ WorldImpl::WorldImpl(Assets& assets, const Input& input)
  */
 void WorldImpl::createSections() {
     for (int i = 0; i < SECTION_COUNT; ++i) {
-        std::list<Section::Column> columns;
+        std::vector<Section::Column> columns;
         int length = randomRange(MIN_SECTION_LENGTH, MAX_SECTION_LENGTH);
         const auto& assets = randomChoice(mAssets.backgrounds);
         for (int columnIdx = 0; columnIdx < length; ++columnIdx) {

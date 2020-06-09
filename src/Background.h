@@ -17,7 +17,7 @@ struct BackgroundAssets {
 
 struct Section {
     using Column = std::vector<const SDL2pp::Texture*>;
-    const std::list<Column> columns;
+    const std::vector<Column> columns;
 };
 
 class Background {

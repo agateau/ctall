@@ -60,10 +60,7 @@ void Background::fillSectionList() {
 void Background::draw(SDL2pp::Renderer& renderer) {
     int startY = mWorld.yForLane(MIN_LANE - 1);
     auto sectionIt = mSections.cbegin();
-
-    auto columnIt = (*sectionIt)->columns.cbegin();
-    for (size_t i = 0; i < mColumnIndex; ++i, ++columnIt) {
-    }
+    auto columnIt = (*sectionIt)->columns.cbegin() + mColumnIndex;
 
     for (int x = mOffset; x < SCREEN_WIDTH; x += LANE_WIDTH) {
         int y = startY;
