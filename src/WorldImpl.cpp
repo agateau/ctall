@@ -24,7 +24,7 @@ public:
                 [this, &scroller, &assets]() { return new Wall(mPool, scroller, assets.wall); }) {
     }
 
-    ~WallTrigger() = default;
+    ~WallTrigger() override = default;
 
     void exec(World& world, const Point& pos) const override {
         auto wall = mPool.get();
@@ -43,7 +43,7 @@ public:
             }) {
     }
 
-    ~BonusTrigger() = default;
+    ~BonusTrigger() override = default;
 
     void exec(World& world, const Point& pos) const override {
         auto bonus = mPool.get();
