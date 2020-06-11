@@ -17,7 +17,7 @@ TileSet::TileSet(unique_ptr<Texture> tileImage) : mTileImage(move(tileImage)) {
     }
 }
 
-Tile* TileSet::tile(int tileId) const {
+const Tile* TileSet::tile(int tileId) const {
     assert(tileId <= ROAD1);
     return mTiles.at(tileId).get();
 }

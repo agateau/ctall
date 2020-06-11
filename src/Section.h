@@ -41,7 +41,7 @@ public:
     };
     explicit TileSet(std::unique_ptr<SDL2pp::Texture> tileImage);
 
-    Tile* tile(int tileId) const;
+    const Tile* tile(int tileId) const;
 
 private:
     std::unique_ptr<SDL2pp::Texture> mTileImage;
