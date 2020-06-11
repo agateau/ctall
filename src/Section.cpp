@@ -7,11 +7,13 @@ Trigger::~Trigger() = default;
 
 TileSet::TileSet(unique_ptr<Texture> tileImage) : mTileImage(move(tileImage)) {
     auto* image = mTileImage.get();
-    Point point = {0, 0};
+    const auto imageSize = image->GetSize();
 
-    for (int i = 0; i <= ROAD1; ++i, point.x += TILE_SIZE) {
-        auto tile = make_unique<Tile>(Tile{image, point});
-        mTiles.emplace_back(std::move(tile));
+    for (int y = 0; y < imageSize.y; y += TILE_SIZE) {
+        for (int x = 0; x < imageSize.x; x += TILE_SIZE) {
+            auto tile = make_unique<Tile>(Tile{image, {x, y}});
+            mTiles.emplace_back(std::move(tile));
+        }
     }
 }
 
