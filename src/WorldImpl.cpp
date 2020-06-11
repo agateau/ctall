@@ -67,6 +67,42 @@ WorldImpl::WorldImpl(Assets& assets, const Input& input)
 
 WorldImpl::~WorldImpl() = default;
 
+static Section loadSection(const vector<BackgroundAssets>& bgAssetsList,
+                           Trigger* wallTrigger,
+                           Trigger* bonusTrigger,
+                           const vector<string>& lines) {
+    std::vector<const SDL2pp::Texture*> images(MAX_LANE - MIN_LANE + 1 + 2);
+    std::vector<const Trigger*> triggers(MAX_LANE - MIN_LANE + 1 + 2);
+
+    assert(lines.size() == MAX_LANE - MIN_LANE + 1);
+    auto columnCount = lines.front().size();
+    vector<Section::Column> columns;
+
+    const auto& assets = randomChoice(bgAssetsList);
+    for (size_t columnIdx = 0; columnIdx < columnCount; ++columnIdx) {
+        auto it = images.begin();
+        auto last = images.end() - 1;
+        *it = &assets.border;
+        ++it;
+        for (; it != last; ++it) {
+            *it = &Random::randomChoice(assets.roads);
+        }
+        *last = &assets.border;
+
+        std::fill(triggers.begin(), triggers.end(), nullptr);
+        for (size_t row = 0; row < lines.size(); ++row) {
+            auto ch = lines.at(row).at(columnIdx);
+            if (ch == '|') {
+                triggers.at(row + 1) = wallTrigger;
+            } else if (ch == '*') {
+                triggers.at(row + 1) = bonusTrigger;
+            }
+        }
+        columns.emplace_back(Section::Column{images, triggers});
+    }
+    return Section{columns};
+}
+
 /**
  * At one point sections will be created from assets
  */
@@ -98,6 +134,26 @@ void WorldImpl::createSections() {
         }
         mSections.emplace_back(Section{columns});
     }
+    mSections.emplace_back(loadSection(mAssets.backgrounds,
+                                       mWallTrigger.get(),
+                                       mBonusTrigger.get(),
+                                       {
+                                           "||     ",
+                                           "  ||   ",
+                                           "    *  ",
+                                           "  ||   ",
+                                           "||     ",
+                                       }));
+    mSections.emplace_back(loadSection(mAssets.backgrounds,
+                                       mWallTrigger.get(),
+                                       mBonusTrigger.get(),
+                                       {
+                                           " *** *  * *** ",
+                                           " * * ** *  *  ",
+                                           " *** * **  *  ",
+                                           " * * *  *  *  ",
+                                           " * * *  *  *  ",
+                                       }));
 }
 
 void WorldImpl::fillTriggers(std::vector<const Trigger*>& triggers) {
