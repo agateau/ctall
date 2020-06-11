@@ -67,27 +67,28 @@ WorldImpl::WorldImpl(Assets& assets, const Input& input)
 
 WorldImpl::~WorldImpl() = default;
 
-static Section loadSection(const vector<BackgroundAssets>& bgAssetsList,
+static Section loadSection(const vector<TileSet>& tileSets,
                            Trigger* wallTrigger,
                            Trigger* bonusTrigger,
                            const vector<string>& lines) {
-    ColumnArray<const SDL2pp::Texture*> images;
+    ColumnArray<const Tile*> tiles;
     ColumnArray<const Trigger*> triggers;
 
     assert(lines.size() == LANE_COUNT);
     auto columnCount = lines.front().size();
     vector<Section::Column> columns;
 
-    const auto& assets = randomChoice(bgAssetsList);
+    const auto& tileSet = randomChoice(tileSets);
     for (size_t columnIdx = 0; columnIdx < columnCount; ++columnIdx) {
-        auto it = images.begin();
-        auto last = images.end() - 1;
-        *it = &assets.border;
+        auto it = tiles.begin();
+        auto last = tiles.end() - 1;
+        *it = tileSet.tile(TileSet::BORDER);
         ++it;
         for (; it != last; ++it) {
-            *it = &Random::randomChoice(assets.roads);
+            auto id = Random::randomChoice<TileSet::TileId>({TileSet::ROAD0, TileSet::ROAD1});
+            *it = tileSet.tile(id);
         }
-        *last = &assets.border;
+        *last = tileSet.tile(TileSet::BORDER);
 
         std::fill(triggers.begin(), triggers.end(), nullptr);
         for (size_t row = 0; row < lines.size(); ++row) {
@@ -98,7 +99,7 @@ static Section loadSection(const vector<BackgroundAssets>& bgAssetsList,
                 triggers.at(row + 1) = bonusTrigger;
             }
         }
-        columns.emplace_back(Section::Column{images, triggers});
+        columns.emplace_back(Section::Column{tiles, triggers});
     }
     return Section{columns};
 }
@@ -107,33 +108,34 @@ static Section loadSection(const vector<BackgroundAssets>& bgAssetsList,
  * At one point sections will be created from assets
  */
 void WorldImpl::createSections() {
-    ColumnArray<const SDL2pp::Texture*> images;
+    ColumnArray<const Tile*> tiles;
     ColumnArray<const Trigger*> triggers;
 
     for (int i = 0; i < SECTION_COUNT; ++i) {
         std::vector<Section::Column> columns;
         int length = randomRange(MIN_SECTION_LENGTH, MAX_SECTION_LENGTH);
-        const auto& assets = randomChoice(mAssets.backgrounds);
+        const auto& tileSet = randomChoice(mAssets.tileSets);
         for (int columnIdx = 0; columnIdx < length; ++columnIdx) {
-            auto it = images.begin();
-            auto last = images.end() - 1;
-            *it = &assets.border;
+            auto it = tiles.begin();
+            auto last = tiles.end() - 1;
+            *it = tileSet.tile(TileSet::BORDER);
             ++it;
             for (; it != last; ++it) {
-                *it = &Random::randomChoice(assets.roads);
+                auto id = Random::randomChoice<TileSet::TileId>({TileSet::ROAD0, TileSet::ROAD1});
+                *it = tileSet.tile(id);
             }
-            *last = &assets.border;
+            *last = tileSet.tile(TileSet::BORDER);
 
             std::fill(triggers.begin(), triggers.end(), nullptr);
             if (columnIdx % SPAWN_SPACING == 0) {
                 fillTriggers(triggers);
             }
 
-            columns.emplace_back(Section::Column{images, triggers});
+            columns.emplace_back(Section::Column{tiles, triggers});
         }
         mSections.emplace_back(Section{columns});
     }
-    mSections.emplace_back(loadSection(mAssets.backgrounds,
+    mSections.emplace_back(loadSection(mAssets.tileSets,
                                        mWallTrigger.get(),
                                        mBonusTrigger.get(),
                                        {
@@ -143,7 +145,7 @@ void WorldImpl::createSections() {
                                            "  ||   ",
                                            "||     ",
                                        }));
-    mSections.emplace_back(loadSection(mAssets.backgrounds,
+    mSections.emplace_back(loadSection(mAssets.tileSets,
                                        mWallTrigger.get(),
                                        mBonusTrigger.get(),
                                        {

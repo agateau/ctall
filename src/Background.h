@@ -1,8 +1,6 @@
 #ifndef BACKGROUND_H
 #define BACKGROUND_H
 
-#include <SDL2pp/SDL2pp.hh>
-
 #include "Section.h"
 
 // std
@@ -11,11 +9,6 @@
 
 class World;
 class Scroller;
-
-struct BackgroundAssets {
-    SDL2pp::Texture border;
-    std::vector<SDL2pp::Texture> roads;
-};
 
 using SectionList = std::list<const Section*>;
 

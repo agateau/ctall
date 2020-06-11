@@ -119,10 +119,13 @@ void Background::draw(SDL2pp::Renderer& renderer) {
     ColumnIterator columnIt(mSections);
     columnIt += mColumnIndex;
 
+    SDL2pp::Rect rect = {0, 0, TILE_SIZE, TILE_SIZE};
     for (int x = mOffset; x < SCREEN_WIDTH; x += TILE_SIZE, ++columnIt) {
         int y = startY;
-        for (auto* texture : columnIt->images) {
-            renderer.Copy(*const_cast<SDL2pp::Texture*>(texture), NullOpt, {x, y});
+        for (auto* tile : columnIt->tiles) {
+            rect.x = tile->pos.x;
+            rect.y = tile->pos.y;
+            renderer.Copy(*const_cast<SDL2pp::Texture*>(tile->image), rect, {x, y});
             y += TILE_SIZE;
         }
     }
