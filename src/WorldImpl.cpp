@@ -76,13 +76,13 @@ static Section generateSection(const vector<TileSet>& tileSets, size_t columnCou
 
         auto it = tiles.begin();
         auto last = tiles.end() - 1;
-        *it = tileSet.tile(TileSet::BORDER);
+        *it = &tileSet.tile(TileSet::BORDER);
         ++it;
         for (; it != last; ++it) {
             auto id = Random::randomChoice<TileSet::TileId>({TileSet::ROAD0, TileSet::ROAD1});
-            *it = tileSet.tile(id);
+            *it = &tileSet.tile(id);
         }
-        *last = tileSet.tile(TileSet::BORDER);
+        *last = &tileSet.tile(TileSet::BORDER);
         std::fill(triggers.begin(), triggers.end(), nullptr);
         section.columns.emplace_back(Section::Column{tiles, triggers});
     }

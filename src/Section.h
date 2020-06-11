@@ -28,7 +28,7 @@ public:
 template <class T> using ColumnArray = std::array<T, SECTION_TILE_HEIGHT>;
 
 struct Tile {
-    const SDL2pp::Texture* image;
+    const SDL2pp::Texture& image;
     const SDL2pp::Point pos = {0, 0};
 };
 
@@ -41,11 +41,11 @@ public:
     };
     explicit TileSet(std::unique_ptr<SDL2pp::Texture> tileImage);
 
-    const Tile* tile(int tileId) const;
+    const Tile& tile(int tileId) const;
 
 private:
     std::unique_ptr<SDL2pp::Texture> mTileImage;
-    std::vector<std::unique_ptr<Tile>> mTiles;
+    std::vector<Tile> mTiles;
 };
 
 struct Section {

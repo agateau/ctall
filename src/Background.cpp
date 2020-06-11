@@ -125,7 +125,7 @@ void Background::draw(SDL2pp::Renderer& renderer) {
         for (auto* tile : columnIt->tiles) {
             rect.x = tile->pos.x;
             rect.y = tile->pos.y;
-            renderer.Copy(*const_cast<SDL2pp::Texture*>(tile->image), rect, {x, y});
+            renderer.Copy(const_cast<SDL2pp::Texture&>(tile->image), rect, {x, y});
             y += TILE_SIZE;
         }
     }
