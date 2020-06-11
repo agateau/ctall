@@ -13,7 +13,7 @@
 using namespace SDL2pp;
 using std::size_t;
 
-static const size_t MIN_COLUMN_COUNT = int(ceil(double(SCREEN_WIDTH) / LANE_WIDTH)) + 2;
+static const size_t MIN_COLUMN_COUNT = int(ceil(double(SCREEN_WIDTH) / TILE_SIZE)) + 2;
 
 /**
  * An iterator to iterate over columns stored in a list of sections.
@@ -75,7 +75,7 @@ void Background::update() {
         fillSectionList();
     }
     int oldOffset = mOffset;
-    mOffset = -int(mScroller.getPosition()) % LANE_WIDTH;
+    mOffset = -int(mScroller.getPosition()) % TILE_SIZE;
     if (mOffset <= oldOffset) {
         return;
     }
@@ -89,12 +89,12 @@ void Background::update() {
 
     ColumnIterator columnIt(mSections);
     columnIt += mColumnIndex + MIN_COLUMN_COUNT - 1;
-    Point pos(int((MIN_COLUMN_COUNT - 1) * LANE_WIDTH), mWorld.yForLane(-1));
+    Point pos(int((MIN_COLUMN_COUNT - 1) * TILE_SIZE), mWorld.yForLane(-1));
     for (auto* trigger : columnIt->triggers) {
         if (trigger) {
             trigger->exec(mWorld, pos);
         }
-        pos.y += LANE_WIDTH;
+        pos.y += TILE_SIZE;
     }
 }
 
@@ -121,11 +121,11 @@ void Background::draw(SDL2pp::Renderer& renderer) {
     ColumnIterator columnIt(mSections);
     columnIt += mColumnIndex;
 
-    for (int x = mOffset; x < SCREEN_WIDTH; x += LANE_WIDTH, ++columnIt) {
+    for (int x = mOffset; x < SCREEN_WIDTH; x += TILE_SIZE, ++columnIt) {
         int y = startY;
         for (auto* texture : columnIt->images) {
             renderer.Copy(*const_cast<SDL2pp::Texture*>(texture), NullOpt, {x, y});
-            y += LANE_WIDTH;
+            y += TILE_SIZE;
         }
     }
 }

@@ -6,7 +6,7 @@ static constexpr int SCREEN_HEIGHT = 240;
 static constexpr int SCREEN_SCALE = 4;
 
 static constexpr int LANE_COUNT = 5;
-static constexpr int LANE_WIDTH = 32;
+static constexpr int TILE_SIZE = 32;
 
 static constexpr float START_SCROLL_SPEED = 200;
 static constexpr int SPAWN_SPACING = 3;

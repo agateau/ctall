@@ -26,8 +26,8 @@ void Bonus::setup(const Point& pos) {
     // Update h before y to properly center the bonus
     mRect.w = size.x;
     mRect.h = size.y;
-    mRect.x = pos.x + (LANE_WIDTH - mRect.w) / 2;
-    mRect.y = pos.y + (LANE_WIDTH - mRect.h) / 2;
+    mRect.x = pos.x + (TILE_SIZE - mRect.w) / 2;
+    mRect.y = pos.y + (TILE_SIZE - mRect.h) / 2;
     mScrollComponent.setup();
     setActive(true);
 }

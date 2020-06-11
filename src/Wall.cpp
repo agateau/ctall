@@ -23,7 +23,7 @@ Wall::Wall(Pool<Wall>& pool, const Scroller& scroller, MaskedTexture& texture)
 
 void Wall::setup(const SDL2pp::Point& pos) {
     mRect.x = pos.x;
-    mRect.y = pos.y + LANE_WIDTH - mRect.h;
+    mRect.y = pos.y + TILE_SIZE - mRect.h;
     mScrollComponent.setup();
     setActive(true);
 }

@@ -31,7 +31,7 @@ Player::Player(World& world,
         , mInput(input) {
     setActiveTexture(&mTexture);
     mRect.x = 12;
-    mRect.y = mWorld.yForLane(0) + (LANE_WIDTH - mRect.h) / 2;
+    mRect.y = mWorld.yForLane(0) + (TILE_SIZE - mRect.h) / 2;
 }
 
 void Player::update(float delta) {

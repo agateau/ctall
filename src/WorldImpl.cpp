@@ -214,8 +214,8 @@ void WorldImpl::switchToGameOverState() {
 }
 
 int WorldImpl::yForLane(int lane) const {
-    const int roadPixelHeight = LANE_COUNT * LANE_WIDTH;
-    return (SCREEN_HEIGHT - roadPixelHeight) / 2 + lane * LANE_WIDTH;
+    const int roadPixelHeight = LANE_COUNT * TILE_SIZE;
+    return (SCREEN_HEIGHT - roadPixelHeight) / 2 + lane * TILE_SIZE;
 }
 
 void WorldImpl::addGameObject(GameObject* gameObject) {
