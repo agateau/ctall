@@ -5,8 +5,7 @@ static constexpr int SCREEN_WIDTH = 360;
 static constexpr int SCREEN_HEIGHT = 240;
 static constexpr int SCREEN_SCALE = 4;
 
-static constexpr int MIN_LANE = -2;
-static constexpr int MAX_LANE = 2;
+static constexpr int LANE_COUNT = 5;
 static constexpr int LANE_WIDTH = 32;
 
 static constexpr float START_SCROLL_SPEED = 200;

@@ -45,8 +45,8 @@ void Player::draw(Renderer& renderer) {
 }
 
 void Player::updateY(float delta) {
-    const int minY = mWorld.yForLane(MIN_LANE) - OFFSET_UP;
-    const int maxY = mWorld.yForLane(MAX_LANE + 1) - OFFSET_DOWN;
+    const int minY = mWorld.yForLane(0) - OFFSET_UP;
+    const int maxY = mWorld.yForLane(LANE_COUNT) - OFFSET_DOWN;
     if (mInput.down && mRect.y < maxY) {
         mRect.y = std::min(int(mRect.y + MOVE_SPEED * delta), maxY);
     }

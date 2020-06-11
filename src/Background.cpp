@@ -89,7 +89,7 @@ void Background::update() {
 
     ColumnIterator columnIt(mSections);
     columnIt += mColumnIndex + MIN_COLUMN_COUNT - 1;
-    Point pos(int((MIN_COLUMN_COUNT - 1) * LANE_WIDTH), mWorld.yForLane(MIN_LANE - 1));
+    Point pos(int((MIN_COLUMN_COUNT - 1) * LANE_WIDTH), mWorld.yForLane(-1));
     for (auto* trigger : columnIt->triggers) {
         if (trigger) {
             trigger->exec(mWorld, pos);
@@ -117,7 +117,7 @@ void Background::fillSectionList() {
 }
 
 void Background::draw(SDL2pp::Renderer& renderer) {
-    int startY = mWorld.yForLane(MIN_LANE - 1);
+    int startY = mWorld.yForLane(-1);
     ColumnIterator columnIt(mSections);
     columnIt += mColumnIndex;
 

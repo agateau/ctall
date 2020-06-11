@@ -71,10 +71,10 @@ static Section loadSection(const vector<BackgroundAssets>& bgAssetsList,
                            Trigger* wallTrigger,
                            Trigger* bonusTrigger,
                            const vector<string>& lines) {
-    std::vector<const SDL2pp::Texture*> images(MAX_LANE - MIN_LANE + 1 + 2);
-    std::vector<const Trigger*> triggers(MAX_LANE - MIN_LANE + 1 + 2);
+    std::vector<const SDL2pp::Texture*> images(LANE_COUNT + 2);
+    std::vector<const Trigger*> triggers(LANE_COUNT + 2);
 
-    assert(lines.size() == MAX_LANE - MIN_LANE + 1);
+    assert(lines.size() == LANE_COUNT);
     auto columnCount = lines.front().size();
     vector<Section::Column> columns;
 
@@ -108,8 +108,8 @@ static Section loadSection(const vector<BackgroundAssets>& bgAssetsList,
  */
 void WorldImpl::createSections() {
     // + 2 for borders
-    std::vector<const SDL2pp::Texture*> images(MAX_LANE - MIN_LANE + 1 + 2);
-    std::vector<const Trigger*> triggers(MAX_LANE - MIN_LANE + 1 + 2);
+    std::vector<const SDL2pp::Texture*> images(LANE_COUNT + 2);
+    std::vector<const Trigger*> triggers(LANE_COUNT + 2);
 
     for (int i = 0; i < SECTION_COUNT; ++i) {
         std::vector<Section::Column> columns;
@@ -214,7 +214,8 @@ void WorldImpl::switchToGameOverState() {
 }
 
 int WorldImpl::yForLane(int lane) const {
-    return SCREEN_HEIGHT / 2 + lane * LANE_WIDTH - LANE_WIDTH / 2;
+    const int roadPixelHeight = LANE_COUNT * LANE_WIDTH;
+    return (SCREEN_HEIGHT - roadPixelHeight) / 2 + lane * LANE_WIDTH;
 }
 
 void WorldImpl::addGameObject(GameObject* gameObject) {
