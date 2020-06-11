@@ -51,9 +51,9 @@ private:
 struct Section {
     struct Column {
         const ColumnArray<const Tile*> tiles;
-        const ColumnArray<const Trigger*> triggers;
+        ColumnArray<const Trigger*> triggers;
     };
-    const std::vector<Column> columns;
+    std::vector<Column> columns;
 };
 
 #endif // SECTION_H
