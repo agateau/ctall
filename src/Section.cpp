@@ -15,7 +15,14 @@ TileSet::TileSet(unique_ptr<Texture> tileImage) : mTileImage(move(tileImage)) {
     }
 }
 
-const Tile& TileSet::tile(int tileId) const {
-    assert(tileId <= ROAD1);
+const Tile& TileSet::tile(size_t tileId) const {
+    assert(tileId < mTiles.size());
     return mTiles.at(tileId);
+}
+
+Section::Column::Column() {
+    for (auto& layer : layers) {
+        std::fill(layer.begin(), layer.end(), nullptr);
+    }
+    std::fill(triggers.begin(), triggers.end(), nullptr);
 }

@@ -121,12 +121,16 @@ void Background::draw(SDL2pp::Renderer& renderer) {
 
     SDL2pp::Rect rect = {0, 0, TILE_SIZE, TILE_SIZE};
     for (int x = mOffset; x < SCREEN_WIDTH; x += TILE_SIZE, ++columnIt) {
-        int y = startY;
-        for (auto* tile : columnIt->tiles) {
-            rect.x = tile->pos.x;
-            rect.y = tile->pos.y;
-            renderer.Copy(const_cast<SDL2pp::Texture&>(tile->image), rect, {x, y});
-            y += TILE_SIZE;
+        for (const auto& layer : columnIt->layers) {
+            int y = startY;
+            for (auto* tile : layer) {
+                if (tile) {
+                    rect.x = tile->pos.x;
+                    rect.y = tile->pos.y;
+                    renderer.Copy(const_cast<SDL2pp::Texture&>(tile->image), rect, {x, y});
+                }
+                y += TILE_SIZE;
+            }
         }
     }
 }

@@ -34,14 +34,9 @@ struct Tile {
 
 class TileSet {
 public:
-    enum TileId {
-        BORDER = 0,
-        ROAD0 = 1,
-        ROAD1 = 2
-    };
     explicit TileSet(std::unique_ptr<SDL2pp::Texture> tileImage);
 
-    const Tile& tile(int tileId) const;
+    const Tile& tile(std::size_t tileId) const;
 
 private:
     std::unique_ptr<SDL2pp::Texture> mTileImage;
@@ -50,7 +45,8 @@ private:
 
 struct Section {
     struct Column {
-        const ColumnArray<const Tile*> tiles;
+        Column();
+        std::array<ColumnArray<const Tile*>, 2> layers;
         ColumnArray<const Trigger*> triggers;
     };
     std::vector<Column> columns;

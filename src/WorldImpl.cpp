@@ -67,24 +67,45 @@ WorldImpl::WorldImpl(Assets& assets, const Input& input)
 
 WorldImpl::~WorldImpl() = default;
 
+enum TileId {
+    BORDER = 0,
+    ROAD0,
+    ROAD1,
+    EXTRA0,
+    EXTRA1,
+    EXTRA2,
+};
+
 static Section generateSection(const vector<TileSet>& tileSets, size_t columnCount) {
     Section section;
     const auto& tileSet = randomChoice(tileSets);
     for (size_t columnIdx = 0; columnIdx < columnCount; ++columnIdx) {
-        ColumnArray<const Tile*> tiles;
-        ColumnArray<const Trigger*> triggers;
+        Section::Column column;
 
-        auto it = tiles.begin();
-        auto last = tiles.end() - 1;
-        *it = &tileSet.tile(TileSet::BORDER);
+        // Bottom layer
+        auto it = column.layers[0].begin();
+        auto last = column.layers[0].end() - 1;
+        *it = &tileSet.tile(BORDER);
         ++it;
         for (; it != last; ++it) {
-            auto id = Random::randomChoice<TileSet::TileId>({TileSet::ROAD0, TileSet::ROAD1});
+            auto id = randomChoice<TileId>({ROAD0, ROAD1});
             *it = &tileSet.tile(id);
         }
-        *last = &tileSet.tile(TileSet::BORDER);
-        std::fill(triggers.begin(), triggers.end(), nullptr);
-        section.columns.emplace_back(Section::Column{tiles, triggers});
+        *last = &tileSet.tile(BORDER);
+
+        // Top layer
+        if (randomRange(3) == 0) {
+            auto id = randomChoice<TileId>({EXTRA0, EXTRA1, EXTRA2});
+            auto it = column.layers[1].begin();
+            *it = &tileSet.tile(id);
+        }
+        if (randomRange(3) == 0) {
+            auto id = randomChoice<TileId>({EXTRA0, EXTRA1, EXTRA2});
+            auto it = column.layers[1].end() - 1;
+            *it = &tileSet.tile(id);
+        }
+
+        section.columns.push_back(column);
     }
     return section;
 }
