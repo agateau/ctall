@@ -71,8 +71,8 @@ static Section loadSection(const vector<BackgroundAssets>& bgAssetsList,
                            Trigger* wallTrigger,
                            Trigger* bonusTrigger,
                            const vector<string>& lines) {
-    std::vector<const SDL2pp::Texture*> images(LANE_COUNT + 2);
-    std::vector<const Trigger*> triggers(LANE_COUNT + 2);
+    ColumnArray<const SDL2pp::Texture*> images;
+    ColumnArray<const Trigger*> triggers;
 
     assert(lines.size() == LANE_COUNT);
     auto columnCount = lines.front().size();
@@ -107,9 +107,8 @@ static Section loadSection(const vector<BackgroundAssets>& bgAssetsList,
  * At one point sections will be created from assets
  */
 void WorldImpl::createSections() {
-    // + 2 for borders
-    std::vector<const SDL2pp::Texture*> images(LANE_COUNT + 2);
-    std::vector<const Trigger*> triggers(LANE_COUNT + 2);
+    ColumnArray<const SDL2pp::Texture*> images;
+    ColumnArray<const Trigger*> triggers;
 
     for (int i = 0; i < SECTION_COUNT; ++i) {
         std::vector<Section::Column> columns;
@@ -156,7 +155,7 @@ void WorldImpl::createSections() {
                                        }));
 }
 
-void WorldImpl::fillTriggers(std::vector<const Trigger*>& triggers) {
+void WorldImpl::fillTriggers(ColumnArray<const Trigger*>& triggers) {
     int wallLane = -1;
     int maxLane = int(triggers.size() - 1);
     if (randomBool() == 0) {

@@ -50,7 +50,7 @@ public:
 
 private:
     void createSections();
-    void fillTriggers(std::vector<const Trigger*>& triggers);
+    void fillTriggers(ColumnArray<const Trigger*>& triggers);
 
     Scroller mScroller;
     Background mBackground;
