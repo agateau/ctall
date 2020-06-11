@@ -62,8 +62,6 @@ private:
     size_t mColumnIndex = 0;
 };
 
-Trigger::~Trigger() = default;
-
 Background::Background(World& world,
                        const Scroller& scroller,
                        const SectionProvider& sectionProvider)

@@ -8,6 +8,7 @@ add_library(ctalllib STATIC
     Player.cpp
     ScrollComponent.cpp
     Scroller.cpp
+    Section.cpp
     StartScreen.cpp
     tools/App.cpp
     tools/Mask.cpp
