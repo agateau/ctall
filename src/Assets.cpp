@@ -47,7 +47,7 @@ Assets::Assets(Renderer& renderer)
         , bonuses(loadAllMasked(renderer, "bonus"))
         , textDrawer(textTexture, ALPHABET, CHAR_SIZE) {
     loadTileSets(renderer);
-    loadSections();
+    loadSections(renderer);
 }
 
 void Assets::loadTileSets(Renderer& renderer) {
@@ -62,10 +62,14 @@ void Assets::loadTileSets(Renderer& renderer) {
     loadTileSet(renderer, backgroundsDir / "roguelike-city-transparent.png", 2);
 }
 
-void Assets::loadTileSet(Renderer& renderer, const string& path, int spacing) {
+const TileSet& Assets::loadTileSet(Renderer& renderer, const string& path, int spacing) {
+    if (auto it = mTileSets.find(path); it != mTileSets.end()) {
+        return it->second;
+    }
     assert(fs::is_regular_file(path));
     auto tileImage = std::make_unique<Texture>(renderer, path);
-    mTileSets.emplace(path, TileSet(std::move(tileImage), spacing));
+    auto [it, inserted] = mTileSets.emplace(path, TileSet(std::move(tileImage), spacing));
+    return it->second;
 }
 
 enum TileId {
@@ -152,7 +156,7 @@ static void fillTriggers(Section::ColumnArray<TriggerId>& triggers) {
     }
 }
 
-Section Assets::loadSection(const string& tmxPath) {
+Section Assets::loadSection(SDL2pp::Renderer& renderer, const string& tmxPath) {
     Section section;
 
     assert(fs::is_regular_file(tmxPath));
@@ -163,7 +167,7 @@ Section Assets::loadSection(const string& tmxPath) {
 
     assert(map.getTilesets().size() == 1);
     auto tmxTileSet = map.getTilesets().front();
-    const auto& tileSet = mTileSets.at(tmxTileSet.getImagePath());
+    const auto& tileSet = loadTileSet(renderer, tmxTileSet.getImagePath(), tmxTileSet.getSpacing());
 
     auto mapTileCount = map.getTileCount();
     assert(mapTileCount.y == Section::TOTAL_HEIGHT);
@@ -215,7 +219,7 @@ Section Assets::loadSection(const string& tmxPath) {
     return section;
 }
 
-void Assets::loadSections() {
+void Assets::loadSections(SDL2pp::Renderer& renderer) {
     std::vector<const TileSet*> tileSets;
     for (const auto& it : mTileSets) {
         tileSets.push_back(&it.second);
@@ -248,7 +252,7 @@ void Assets::loadSections() {
                                                        " * * *  *  *  ",
                                                        " * * *  *  *  ",
                                                    }));
-    sections.emplace_back(loadSection(mBaseDir + "/backgrounds/bg.tmx"));
+    sections.emplace_back(loadSection(renderer, mBaseDir + "/backgrounds/bg.tmx"));
 }
 
 Texture Assets::load(Renderer& renderer, const std::string& name) {

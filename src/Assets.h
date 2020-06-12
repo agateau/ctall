@@ -29,11 +29,11 @@ public:
 
 private:
     void loadTileSets(SDL2pp::Renderer& renderer);
-    void loadTileSet(SDL2pp::Renderer& renderer, const std::string& path, int spacing);
+    const TileSet& loadTileSet(SDL2pp::Renderer& renderer, const std::string& path, int spacing);
 
-    void loadSections();
+    void loadSections(SDL2pp::Renderer& renderer);
 
-    Section loadSection(const std::string& tmxPath);
+    Section loadSection(SDL2pp::Renderer& renderer, const std::string& tmxPath);
 
     std::unordered_map<std::string, TileSet> mTileSets;
 
