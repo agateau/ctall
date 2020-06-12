@@ -16,6 +16,12 @@ static constexpr int SECTION_TILE_HEIGHT = LANE_COUNT + 2;
 
 class World;
 
+enum class TriggerId {
+    None,
+    Wall,
+    Bonus
+};
+
 /**
  * Triggers something when the cell is about to become visible
  */
@@ -47,7 +53,7 @@ struct Section {
     struct Column {
         Column();
         std::array<ColumnArray<const Tile*>, 2> layers;
-        ColumnArray<const Trigger*> triggers;
+        ColumnArray<TriggerId> triggers;
     };
     std::vector<Column> columns;
 };

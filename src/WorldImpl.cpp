@@ -56,11 +56,12 @@ private:
 };
 
 WorldImpl::WorldImpl(Assets& assets, const Input& input)
-        : mBackground(*this, mScroller, *this)
+        : mWallTrigger(make_unique<WallTrigger>(assets, mScroller))
+        , mBonusTrigger(make_unique<BonusTrigger>(assets, mScroller))
+        , mTriggers({{TriggerId::Wall, mWallTrigger.get()}, {TriggerId::Bonus, mBonusTrigger.get()}})
+        , mBackground(*this, mScroller, *this, mTriggers)
         , mPlayer(*this, assets.player, assets.playerUp, assets.playerDown, input)
-        , mAssets(assets)
-        , mWallTrigger(make_unique<WallTrigger>(assets, mScroller))
-        , mBonusTrigger(make_unique<BonusTrigger>(assets, mScroller)) {
+        , mAssets(assets) {
     mGameObjects.push_back(&mPlayer);
     createSections();
 }
@@ -111,8 +112,6 @@ static Section generateSection(const vector<TileSet>& tileSets, size_t columnCou
 }
 
 static Section loadSection(const vector<TileSet>& tileSets,
-                           Trigger* wallTrigger,
-                           Trigger* bonusTrigger,
                            const vector<string>& lines) {
     assert(lines.size() == LANE_COUNT);
     auto columnCount = lines.front().size();
@@ -124,9 +123,9 @@ static Section loadSection(const vector<TileSet>& tileSets,
         for (size_t row = 0; row < lines.size(); ++row) {
             auto ch = lines.at(row).at(columnIdx);
             if (ch == '|') {
-                triggers.at(row + 1) = wallTrigger;
+                triggers.at(row + 1) = TriggerId::Wall;
             } else if (ch == '*') {
-                triggers.at(row + 1) = bonusTrigger;
+                triggers.at(row + 1) = TriggerId::Bonus;
             }
         }
     }
@@ -150,8 +149,6 @@ void WorldImpl::createSections() {
         mSections.emplace_back(section);
     }
     mSections.emplace_back(loadSection(mAssets.tileSets,
-                                       mWallTrigger.get(),
-                                       mBonusTrigger.get(),
                                        {
                                            "||     ",
                                            "  ||   ",
@@ -160,8 +157,6 @@ void WorldImpl::createSections() {
                                            "||     ",
                                        }));
     mSections.emplace_back(loadSection(mAssets.tileSets,
-                                       mWallTrigger.get(),
-                                       mBonusTrigger.get(),
                                        {
                                            " *** *  * *** ",
                                            " * * ** *  *  ",
@@ -171,12 +166,12 @@ void WorldImpl::createSections() {
                                        }));
 }
 
-void WorldImpl::fillTriggers(ColumnArray<const Trigger*>& triggers) {
+void WorldImpl::fillTriggers(ColumnArray<TriggerId>& triggers) {
     int wallLane = -1;
     int maxLane = int(triggers.size() - 1);
     if (randomBool() == 0) {
         wallLane = randomRange(1, maxLane);
-        triggers[wallLane] = mWallTrigger.get();
+        triggers[wallLane] = TriggerId::Wall;
     }
 
     if (randomRange(4) == 0) {
@@ -184,7 +179,7 @@ void WorldImpl::fillTriggers(ColumnArray<const Trigger*>& triggers) {
         while (bonusLane == wallLane) {
             bonusLane = randomRange(1, maxLane);
         }
-        triggers[bonusLane] = mBonusTrigger.get();
+        triggers[bonusLane] = TriggerId::Bonus;
     }
 }
 

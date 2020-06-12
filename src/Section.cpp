@@ -24,5 +24,5 @@ Section::Column::Column() {
     for (auto& layer : layers) {
         std::fill(layer.begin(), layer.end(), nullptr);
     }
-    std::fill(triggers.begin(), triggers.end(), nullptr);
+    std::fill(triggers.begin(), triggers.end(), TriggerId::None);
 }

@@ -50,14 +50,15 @@ public:
 
 private:
     void createSections();
-    void fillTriggers(ColumnArray<const Trigger*>& triggers);
+    void fillTriggers(ColumnArray<TriggerId>& triggers);
 
     Scroller mScroller;
+    const std::unique_ptr<Trigger> mWallTrigger;
+    const std::unique_ptr<Trigger> mBonusTrigger;
+    TriggerMap mTriggers;
     Background mBackground;
     Player mPlayer;
     Assets& mAssets;
-    const std::unique_ptr<Trigger> mWallTrigger;
-    const std::unique_ptr<Trigger> mBonusTrigger;
     std::vector<GameObject*> mGameObjects;
     std::vector<Section> mSections;
 

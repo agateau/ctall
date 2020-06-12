@@ -64,8 +64,12 @@ private:
 
 Background::Background(World& world,
                        const Scroller& scroller,
-                       const SectionProvider& sectionProvider)
-        : mWorld(world), mScroller(scroller), mSectionProvider(sectionProvider) {
+                       const SectionProvider& sectionProvider,
+                       const TriggerMap& triggers)
+        : mWorld(world)
+        , mScroller(scroller)
+        , mSectionProvider(sectionProvider)
+        , mTriggers(triggers) {
 }
 
 void Background::update() {
@@ -88,9 +92,9 @@ void Background::update() {
     ColumnIterator columnIt(mSections);
     columnIt += mColumnIndex + MIN_COLUMN_COUNT - 1;
     Point pos(int((MIN_COLUMN_COUNT - 1) * TILE_SIZE), mWorld.yForLane(-1));
-    for (auto* trigger : columnIt->triggers) {
-        if (trigger) {
-            trigger->exec(mWorld, pos);
+    for (auto triggerId : columnIt->triggers) {
+        if (triggerId != TriggerId::None) {
+            mTriggers.at(triggerId)->exec(mWorld, pos);
         }
         pos.y += TILE_SIZE;
     }
