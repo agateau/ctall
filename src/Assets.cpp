@@ -100,7 +100,8 @@ static Section generateSection(const vector<TileSet>& tileSets, size_t columnCou
     return section;
 }
 
-static Section loadSection(const vector<TileSet>& tileSets, const vector<string>& lines) {
+static Section createSectionFromStrings(const vector<TileSet>& tileSets,
+                                        const vector<string>& lines) {
     assert(lines.size() == LANE_COUNT);
     auto columnCount = lines.front().size();
 
@@ -152,22 +153,22 @@ void Assets::loadSections() {
         }
         sections.emplace_back(section);
     }
-    sections.emplace_back(loadSection(tileSets,
-                                      {
-                                          "||     ",
-                                          "  ||   ",
-                                          "    *  ",
-                                          "  ||   ",
-                                          "||     ",
-                                      }));
-    sections.emplace_back(loadSection(tileSets,
-                                      {
-                                          " *** *  * *** ",
-                                          " * * ** *  *  ",
-                                          " *** * **  *  ",
-                                          " * * *  *  *  ",
-                                          " * * *  *  *  ",
-                                      }));
+    sections.emplace_back(createSectionFromStrings(tileSets,
+                                                   {
+                                                       "||     ",
+                                                       "  ||   ",
+                                                       "    *  ",
+                                                       "  ||   ",
+                                                       "||     ",
+                                                   }));
+    sections.emplace_back(createSectionFromStrings(tileSets,
+                                                   {
+                                                       " *** *  * *** ",
+                                                       " * * ** *  *  ",
+                                                       " *** * **  *  ",
+                                                       " * * *  *  *  ",
+                                                       " * * *  *  *  ",
+                                                   }));
 }
 
 Texture Assets::load(Renderer& renderer, const std::string& name) {
