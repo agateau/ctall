@@ -6,6 +6,12 @@
 // sdl2pp
 #include <SDL2pp/SDL2pp.hh>
 
+// tmxlite
+#include <tmxlite/Map.hpp>
+#include <tmxlite/Object.hpp>
+#include <tmxlite/ObjectGroup.hpp>
+#include <tmxlite/TileLayer.hpp>
+
 // std
 #include <cassert>
 #include <filesystem>
@@ -51,10 +57,15 @@ void Assets::loadTileSets(Renderer& renderer) {
         if (!fs::is_regular_file(tileImagePath)) {
             break;
         }
-        auto tileImage = std::make_unique<Texture>(renderer, tileImagePath);
-        tileSets.emplace_back(TileSet(std::move(tileImage)));
+        loadTileSet(renderer, tileImagePath, 0);
     }
-    assert(!tileSets.empty());
+    loadTileSet(renderer, backgroundsDir / "roguelike-city-transparent.png", 2);
+}
+
+void Assets::loadTileSet(Renderer& renderer, const string& path, int spacing) {
+    assert(fs::is_regular_file(path));
+    auto tileImage = std::make_unique<Texture>(renderer, path);
+    mTileSets.emplace(path, TileSet(std::move(tileImage), spacing));
 }
 
 enum TileId {
@@ -66,7 +77,7 @@ enum TileId {
     EXTRA2,
 };
 
-static Section generateSection(const vector<TileSet>& tileSets, size_t columnCount) {
+static Section generateSection(const vector<const TileSet*>& tileSets, size_t columnCount) {
     Section section;
     const auto& tileSet = randomChoice(tileSets);
     for (size_t columnIdx = 0; columnIdx < columnCount; ++columnIdx) {
@@ -74,12 +85,12 @@ static Section generateSection(const vector<TileSet>& tileSets, size_t columnCou
 
         // Bottom layer
         auto& bottomLayer = column.layers[0];
-        std::fill(bottomLayer.begin(), bottomLayer.end(), &tileSet.tile(BORDER));
+        std::fill(bottomLayer.begin(), bottomLayer.end(), &tileSet->tile(BORDER));
         auto it = bottomLayer.begin() + Section::BORDER_HEIGHT;
         auto end = bottomLayer.end() - Section::BORDER_HEIGHT;
         for (; it != end; ++it) {
             auto id = randomChoice<TileId>({ROAD0, ROAD1});
-            *it = &tileSet.tile(id);
+            *it = &tileSet->tile(id);
         }
 
         // Top layer
@@ -87,7 +98,7 @@ static Section generateSection(const vector<TileSet>& tileSets, size_t columnCou
         auto addRandomExtra = [&tileSet](const auto& it) {
             if (randomRange(3) == 0) {
                 auto id = randomChoice<TileId>({EXTRA0, EXTRA1, EXTRA2});
-                *it = &tileSet.tile(id);
+                *it = &tileSet->tile(id);
             }
         };
         for (int idx = 0; idx < Section::BORDER_HEIGHT; ++idx) {
@@ -100,7 +111,7 @@ static Section generateSection(const vector<TileSet>& tileSets, size_t columnCou
     return section;
 }
 
-static Section createSectionFromStrings(const vector<TileSet>& tileSets,
+static Section createSectionFromStrings(const vector<const TileSet*>& tileSets,
                                         const vector<string>& lines) {
     assert(lines.size() == LANE_COUNT);
     auto columnCount = lines.front().size();
@@ -141,7 +152,75 @@ static void fillTriggers(Section::ColumnArray<TriggerId>& triggers) {
     }
 }
 
+Section Assets::loadSection(const string& tmxPath) {
+    Section section;
+
+    assert(fs::is_regular_file(tmxPath));
+    tmx::Map map;
+    if (!map.load(tmxPath)) {
+        abort();
+    }
+
+    assert(map.getTilesets().size() == 1);
+    auto tmxTileSet = map.getTilesets().front();
+    const auto& tileSet = mTileSets.at(tmxTileSet.getImagePath());
+
+    auto mapTileCount = map.getTileCount();
+    assert(mapTileCount.y == Section::TOTAL_HEIGHT);
+    section.columns.resize(mapTileCount.x);
+
+    const auto& layers = map.getLayers();
+    assert(layers.size() == Section::IMAGE_LAYERS + 1);
+
+    // Fill image layers
+    for (size_t layerIdx = 0; layerIdx < Section::IMAGE_LAYERS; ++layerIdx) {
+        const auto& layer = layers.at(layerIdx);
+        assert(layer->getType() == tmx::Layer::Type::Tile);
+        const auto& tileLayer = layer->getLayerAs<tmx::TileLayer>();
+
+        for (size_t columnIdx = 0; columnIdx < mapTileCount.x; ++columnIdx) {
+            auto& column = section.columns.at(columnIdx);
+            for (size_t rowIdx = 0; rowIdx < mapTileCount.y; ++rowIdx) {
+                size_t tileIdx = rowIdx * mapTileCount.x + columnIdx;
+                auto tmxTile = tileLayer.getTiles().at(tileIdx);
+                if (tmxTile.ID == 0) {
+                    continue;
+                }
+                const auto& tile = tileSet.tile(tmxTile.ID - 1);
+                column.layers.at(layerIdx)[rowIdx] = &tile;
+            }
+        }
+    }
+
+    // Fill triggers
+    const auto& layer = layers.at(Section::IMAGE_LAYERS);
+    assert(layer->getType() == tmx::Layer::Type::Object);
+    const auto& objectLayer = layer->getLayerAs<tmx::ObjectGroup>();
+    for (const auto& object : objectLayer.getObjects()) {
+        auto type = object.getType();
+        TriggerId triggerId = TriggerId::None;
+        if (type == "Wall") {
+            triggerId = TriggerId::Wall;
+        } else if (type == "Bonus") {
+            triggerId = TriggerId::Bonus;
+        } else {
+            cerr << "Invalid object type: " << type << '\n';
+            abort();
+        }
+        size_t columnIdx = size_t(object.getPosition().x / TILE_SIZE);
+        size_t rowIdx = size_t(object.getPosition().y / TILE_SIZE);
+        section.columns.at(columnIdx).triggers[rowIdx] = triggerId;
+    }
+
+    return section;
+}
+
 void Assets::loadSections() {
+    std::vector<const TileSet*> tileSets;
+    for (const auto& it : mTileSets) {
+        tileSets.push_back(&it.second);
+    }
+
     for (int i = 0; i < SECTION_COUNT; ++i) {
         int length = randomRange(MIN_SECTION_LENGTH, MAX_SECTION_LENGTH);
         Section section = generateSection(tileSets, length);
@@ -169,6 +248,7 @@ void Assets::loadSections() {
                                                        " * * *  *  *  ",
                                                        " * * *  *  *  ",
                                                    }));
+    sections.emplace_back(loadSection(mBaseDir + "/backgrounds/bg.tmx"));
 }
 
 Texture Assets::load(Renderer& renderer, const std::string& name) {

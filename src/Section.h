@@ -35,7 +35,7 @@ struct Tile {
 
 class TileSet {
 public:
-    explicit TileSet(std::unique_ptr<SDL2pp::Texture> tileImage);
+    explicit TileSet(std::unique_ptr<SDL2pp::Texture> tileImage, int spacing);
 
     const Tile& tile(std::size_t tileId) const;
 
@@ -47,12 +47,13 @@ private:
 struct Section {
     static constexpr int BORDER_HEIGHT = 2;
     static constexpr int TOTAL_HEIGHT = LANE_COUNT + 2 * BORDER_HEIGHT;
+    static constexpr int IMAGE_LAYERS = 2;
 
     template <class T> using ColumnArray = std::array<T, TOTAL_HEIGHT>;
 
     struct Column {
         Column();
-        std::array<ColumnArray<const Tile*>, 2> layers;
+        std::array<ColumnArray<const Tile*>, IMAGE_LAYERS> layers;
         ColumnArray<TriggerId> triggers;
     };
     std::vector<Column> columns;

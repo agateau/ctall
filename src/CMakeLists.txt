@@ -31,7 +31,7 @@ target_include_directories(ctalllib PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/tools
     ${CMAKE_CURRENT_BINARY_DIR}
 )
-target_link_libraries(ctalllib ${SDL2PP_LIBRARIES})
+target_link_libraries(ctalllib ${SDL2PP_LIBRARIES} tmxlite)
 
 add_executable(ctall main.cpp)
 target_link_libraries(ctall ctalllib)
