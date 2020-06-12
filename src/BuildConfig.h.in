@@ -1,0 +1,6 @@
+#ifndef BUILDCONFIG_H
+#define BUILDCONFIG_H
+
+static constexpr char ASSETS_DIR[] = "@ASSETS_DIR@";
+
+#endif // BUILDCONFIG_H

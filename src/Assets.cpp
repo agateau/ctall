@@ -1,6 +1,11 @@
 #include "Assets.h"
 
+#include "BuildConfig.h"
+
+// sdl2pp
 #include <SDL2pp/SDL2pp.hh>
+
+// std
 #include <cassert>
 #include <filesystem>
 
@@ -20,7 +25,7 @@ static constexpr char ALPHABET[] = " !*+,-./0"
 static constexpr Point CHAR_SIZE = {9, 8};
 
 Assets::Assets(Renderer& renderer)
-        : mBaseDir("assets")
+        : mBaseDir(ASSETS_DIR)
         , textTexture(load(renderer, "font"))
         , player(loadMasked(renderer, "player"))
         , playerDown(loadMasked(renderer, "player-down"))
