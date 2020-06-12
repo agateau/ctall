@@ -22,9 +22,12 @@ public:
     std::vector<MaskedTexture> bonuses;
     std::vector<TileSet> tileSets;
     TextDrawer textDrawer;
+    std::vector<Section> sections;
 
 private:
     void loadTileSets(SDL2pp::Renderer& renderer);
+    void loadSections();
+
     SDL2pp::Texture load(SDL2pp::Renderer& renderer, const std::string& name);
     MaskedTexture loadMasked(SDL2pp::Renderer& renderer, const std::string& name);
     std::vector<MaskedTexture> loadAllMasked(SDL2pp::Renderer& renderer,

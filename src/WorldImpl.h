@@ -49,9 +49,6 @@ public:
     const Section* getSection() const override;
 
 private:
-    void createSections();
-    void fillTriggers(ColumnArray<TriggerId>& triggers);
-
     Scroller mScroller;
     const std::unique_ptr<Trigger> mWallTrigger;
     const std::unique_ptr<Trigger> mBonusTrigger;
@@ -60,7 +57,6 @@ private:
     Player mPlayer;
     Assets& mAssets;
     std::vector<GameObject*> mGameObjects;
-    std::vector<Section> mSections;
 
     State mState = State::Running;
 };
