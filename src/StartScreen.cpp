@@ -2,7 +2,6 @@
 
 #include "Assets.h"
 #include "CtallApp.h"
-#include "constants.h"
 
 StartScreen::StartScreen(CtallApp& app)
         : mApp(app), mAssets(mApp.assets()), mMenu(mAssets.textDrawer) {
@@ -15,9 +14,11 @@ void StartScreen::onEvent(const SDL_Event& event) {
 }
 
 void StartScreen::draw(SDL2pp::Renderer& renderer) {
+    auto center = mApp.screenSize() / 2;
+
     mAssets.textDrawer.draw(renderer,
                             "CATCH THEM ALL!\n\n",
-                            {SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2},
+                            center,
                             TextDrawer::HCENTER | TextDrawer::BOTTOM);
-    mMenu.draw(renderer, {SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2});
+    mMenu.draw(renderer, center);
 }

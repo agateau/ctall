@@ -19,7 +19,8 @@ inline std::chrono::time_point<std::chrono::steady_clock> now() {
 }
 
 App::App(const std::string& title, int width, int height, int scale)
-        : mWindow(title,
+        : mScale(scale)
+        , mWindow(title,
                   SDL_WINDOWPOS_UNDEFINED,
                   SDL_WINDOWPOS_UNDEFINED,
                   width * scale,
@@ -27,6 +28,7 @@ App::App(const std::string& title, int width, int height, int scale)
                   SDL_WINDOW_SHOWN)
         , mRenderer(mWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC) {
     mRenderer.SetScale(scale, scale);
+    mScreenSize = mWindow.GetSize() / mScale;
 }
 
 App::~App() = default;

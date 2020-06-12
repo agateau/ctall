@@ -14,7 +14,7 @@ using namespace SDL2pp;
 GameScreen::GameScreen(CtallApp& app)
         : mApp(app)
         , mAssets(app.assets())
-        , mWorld(app.assets(), mInput)
+        , mWorld(app.assets(), mInput, mApp.screenSize())
         , mGameOverMenu(mAssets.textDrawer)
         , mPauseMenu(mAssets.textDrawer) {
     mGameOverMenu.addItem("RESTART", [&app] { app.showGameScreen(); });
@@ -63,14 +63,14 @@ void GameScreen::drawHud(Renderer& renderer) {
 }
 
 void GameScreen::drawGameOverOverlay(Renderer& renderer) {
-    Point center = {SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2};
+    Point center = mApp.screenSize() / 2;
     mAssets.textDrawer.draw(
         renderer, "GAME OVER\n\n", center, TextDrawer::HCENTER | TextDrawer::BOTTOM);
     mGameOverMenu.draw(renderer, center);
 }
 
 void GameScreen::drawPauseOverlay(Renderer& renderer) {
-    Point center = {SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2};
+    Point center = mApp.screenSize() / 2;
     mAssets.textDrawer.draw(
         renderer, "PAUSED\n\n", center, TextDrawer::HCENTER | TextDrawer::BOTTOM);
     mPauseMenu.draw(renderer, center);

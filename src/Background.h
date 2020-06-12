@@ -3,6 +3,9 @@
 
 #include "Section.h"
 
+// SDL2pp
+#include <SDL2pp/SDL2pp.hh>
+
 // std
 #include <list>
 #include <vector>
@@ -24,7 +27,8 @@ public:
     Background(World& world,
                const Scroller& scroller,
                const SectionProvider& sectionProvider,
-               const TriggerMap& triggers);
+               const TriggerMap& triggers,
+               const SDL2pp::Point& screenSize);
 
     void update();
 
@@ -32,6 +36,8 @@ public:
 
 private:
     void fillSectionList();
+    const std::size_t mMinColumnCount;
+    const SDL2pp::Point& mScreenSize;
 
     World& mWorld;
     const Scroller& mScroller;

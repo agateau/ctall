@@ -51,11 +51,13 @@ private:
     mutable Pool<Bonus> mPool;
 };
 
-WorldImpl::WorldImpl(Assets& assets, const Input& input)
-        : mWallTrigger(make_unique<WallTrigger>(assets, mScroller))
+WorldImpl::WorldImpl(Assets& assets, const Input& input, const SDL2pp::Point& screenSize)
+        : mScreenSize(screenSize)
+        , mWallTrigger(make_unique<WallTrigger>(assets, mScroller))
         , mBonusTrigger(make_unique<BonusTrigger>(assets, mScroller))
-        , mTriggers({{TriggerId::Wall, mWallTrigger.get()}, {TriggerId::Bonus, mBonusTrigger.get()}})
-        , mBackground(*this, mScroller, *this, mTriggers)
+        , mTriggers(
+              {{TriggerId::Wall, mWallTrigger.get()}, {TriggerId::Bonus, mBonusTrigger.get()}})
+        , mBackground(*this, mScroller, *this, mTriggers, mScreenSize)
         , mPlayer(*this, assets.player, assets.playerUp, assets.playerDown, input)
         , mAssets(assets) {
     mGameObjects.push_back(&mPlayer);
@@ -105,7 +107,7 @@ void WorldImpl::switchToGameOverState() {
 
 int WorldImpl::yForLane(int lane) const {
     const int roadPixelHeight = LANE_COUNT * TILE_SIZE;
-    return (SCREEN_HEIGHT - roadPixelHeight) / 2 + lane * TILE_SIZE;
+    return (mScreenSize.y - roadPixelHeight) / 2 + lane * TILE_SIZE;
 }
 
 void WorldImpl::addGameObject(GameObject* gameObject) {

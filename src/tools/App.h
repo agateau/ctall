@@ -23,7 +23,13 @@ public:
         return mRenderer;
     }
 
+    const SDL2pp::Point& screenSize() const {
+        return mScreenSize;
+    }
+
 private:
+    SDL2pp::Point mScreenSize;
+    const int mScale;
     SDL2pp::Window mWindow;
     SDL2pp::Renderer mRenderer;
     std::unique_ptr<Screen> mScreen;

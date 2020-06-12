@@ -13,8 +13,6 @@
 using namespace SDL2pp;
 using std::size_t;
 
-static const size_t MIN_COLUMN_COUNT = int(ceil(double(SCREEN_WIDTH) / TILE_SIZE)) + 2;
-
 /**
  * An iterator to iterate over columns stored in a list of sections.
  * Not STL compliant: it asserts if it goes past the end of the columns, among other differences.
@@ -65,8 +63,11 @@ private:
 Background::Background(World& world,
                        const Scroller& scroller,
                        const SectionProvider& sectionProvider,
-                       const TriggerMap& triggers)
-        : mWorld(world)
+                       const TriggerMap& triggers,
+                       const SDL2pp::Point& screenSize)
+        : mMinColumnCount(size_t(ceil(double(screenSize.x) / TILE_SIZE)) + 2)
+        , mScreenSize(screenSize)
+        , mWorld(world)
         , mScroller(scroller)
         , mSectionProvider(sectionProvider)
         , mTriggers(triggers) {
@@ -90,8 +91,8 @@ void Background::update() {
     fillSectionList();
 
     ColumnIterator columnIt(mSections);
-    columnIt += mColumnIndex + MIN_COLUMN_COUNT - 1;
-    Point pos(int((MIN_COLUMN_COUNT - 1) * TILE_SIZE), mWorld.yForLane(-Section::BORDER_HEIGHT));
+    columnIt += mColumnIndex + mMinColumnCount - 1;
+    Point pos(int((mMinColumnCount - 1) * TILE_SIZE), mWorld.yForLane(-Section::BORDER_HEIGHT));
     for (auto triggerId : columnIt->triggers) {
         if (triggerId != TriggerId::None) {
             mTriggers.at(triggerId)->exec(mWorld, pos);
@@ -111,7 +112,7 @@ void Background::fillSectionList() {
                                               return value + section->columns.size();
                                           })
                           - mColumnIndex;
-    while (totalColumns < MIN_COLUMN_COUNT) {
+    while (totalColumns < mMinColumnCount) {
         const auto* section = mSectionProvider.getSection();
         mSections.push_back(section);
         totalColumns += section->columns.size();
@@ -124,7 +125,7 @@ void Background::draw(SDL2pp::Renderer& renderer) {
     columnIt += mColumnIndex;
 
     SDL2pp::Rect rect = {0, 0, TILE_SIZE, TILE_SIZE};
-    for (int x = mOffset; x < SCREEN_WIDTH; x += TILE_SIZE, ++columnIt) {
+    for (int x = mOffset; x < mScreenSize.x; x += TILE_SIZE, ++columnIt) {
         for (const auto& layer : columnIt->layers) {
             int y = startY;
             for (auto* tile : layer) {
