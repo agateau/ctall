@@ -11,9 +11,6 @@
 #include <memory>
 #include <vector>
 
-// + 2 for borders
-static constexpr int SECTION_TILE_HEIGHT = LANE_COUNT + 2;
-
 class World;
 
 enum class TriggerId {
@@ -30,8 +27,6 @@ public:
     virtual ~Trigger();
     virtual void exec(World& world, const SDL2pp::Point& position) const = 0;
 };
-
-template <class T> using ColumnArray = std::array<T, SECTION_TILE_HEIGHT>;
 
 struct Tile {
     const SDL2pp::Texture& image;
@@ -50,6 +45,11 @@ private:
 };
 
 struct Section {
+    static constexpr int BORDER_HEIGHT = 2;
+    static constexpr int TOTAL_HEIGHT = LANE_COUNT + 2 * BORDER_HEIGHT;
+
+    template <class T> using ColumnArray = std::array<T, TOTAL_HEIGHT>;
+
     struct Column {
         Column();
         std::array<ColumnArray<const Tile*>, 2> layers;

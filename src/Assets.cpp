@@ -73,26 +73,26 @@ static Section generateSection(const vector<TileSet>& tileSets, size_t columnCou
         Section::Column column;
 
         // Bottom layer
-        auto it = column.layers[0].begin();
-        auto last = column.layers[0].end() - 1;
-        *it = &tileSet.tile(BORDER);
-        ++it;
-        for (; it != last; ++it) {
+        auto& bottomLayer = column.layers[0];
+        std::fill(bottomLayer.begin(), bottomLayer.end(), &tileSet.tile(BORDER));
+        auto it = bottomLayer.begin() + Section::BORDER_HEIGHT;
+        auto end = bottomLayer.end() - Section::BORDER_HEIGHT;
+        for (; it != end; ++it) {
             auto id = randomChoice<TileId>({ROAD0, ROAD1});
             *it = &tileSet.tile(id);
         }
-        *last = &tileSet.tile(BORDER);
 
         // Top layer
-        if (randomRange(3) == 0) {
-            auto id = randomChoice<TileId>({EXTRA0, EXTRA1, EXTRA2});
-            auto it = column.layers[1].begin();
-            *it = &tileSet.tile(id);
-        }
-        if (randomRange(3) == 0) {
-            auto id = randomChoice<TileId>({EXTRA0, EXTRA1, EXTRA2});
-            auto it = column.layers[1].end() - 1;
-            *it = &tileSet.tile(id);
+        auto& topLayer = column.layers[1];
+        auto addRandomExtra = [&tileSet](const auto& it) {
+            if (randomRange(3) == 0) {
+                auto id = randomChoice<TileId>({EXTRA0, EXTRA1, EXTRA2});
+                *it = &tileSet.tile(id);
+            }
+        };
+        for (int idx = 0; idx < Section::BORDER_HEIGHT; ++idx) {
+            addRandomExtra(topLayer.begin() + idx);
+            addRandomExtra(topLayer.end() - idx - 1);
         }
 
         section.columns.push_back(column);
@@ -111,9 +111,9 @@ static Section loadSection(const vector<TileSet>& tileSets, const vector<string>
         for (size_t row = 0; row < lines.size(); ++row) {
             auto ch = lines.at(row).at(columnIdx);
             if (ch == '|') {
-                triggers.at(row + 1) = TriggerId::Wall;
+                triggers.at(row + Section::BORDER_HEIGHT) = TriggerId::Wall;
             } else if (ch == '*') {
-                triggers.at(row + 1) = TriggerId::Bonus;
+                triggers.at(row + Section::BORDER_HEIGHT) = TriggerId::Bonus;
             }
         }
     }
@@ -121,18 +121,20 @@ static Section loadSection(const vector<TileSet>& tileSets, const vector<string>
     return section;
 }
 
-static void fillTriggers(ColumnArray<TriggerId>& triggers) {
+static void fillTriggers(Section::ColumnArray<TriggerId>& triggers) {
     int wallLane = -1;
-    int maxLane = int(triggers.size() - 1);
+    auto randomLaneRange = []() -> int {
+        return randomRange(Section::BORDER_HEIGHT, Section::BORDER_HEIGHT + LANE_COUNT);
+    };
     if (randomBool() == 0) {
-        wallLane = randomRange(1, maxLane);
+        wallLane = randomLaneRange();
         triggers[wallLane] = TriggerId::Wall;
     }
 
     if (randomRange(4) == 0) {
         int bonusLane = wallLane;
         while (bonusLane == wallLane) {
-            bonusLane = randomRange(1, maxLane);
+            bonusLane = randomLaneRange();
         }
         triggers[bonusLane] = TriggerId::Bonus;
     }
