@@ -1,3 +1,6 @@
 [submodule "third-party/libSDL2pp"]
 	path = third-party/libSDL2pp
 	url = git://github.com/libSDL2pp/libSDL2pp.git
+[submodule "third-party/tmxlite"]
+	path = third-party/tmxlite
+	url = https://github.com/fallahn/tmxlite

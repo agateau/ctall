@@ -10,3 +10,6 @@ add_subdirectory(libSDL2pp)
 # Forward variables
 SET(SDL2PP_INCLUDE_DIRS ${SDL2PP_INCLUDE_DIRS} PARENT_SCOPE)
 SET(SDL2PP_LIBRARIES ${SDL2PP_LIBRARIES} PARENT_SCOPE)
+
+set(TMXLITE_STATIC_LIB ON)
+add_subdirectory(tmxlite/tmxlite)
