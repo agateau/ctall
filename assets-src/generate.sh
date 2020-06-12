@@ -5,7 +5,7 @@ ASEPRITE=${ASEPRITE:-aseprite}
 cd $(dirname $0)
 
 SRC_DIR=$PWD
-DST_DIR=$PWD/../images
+DST_DIR=$PWD/../assets
 
 for name in player player-down player-up wall ; do
     echo "Processing $name"

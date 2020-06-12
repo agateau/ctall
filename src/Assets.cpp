@@ -20,7 +20,7 @@ static constexpr char ALPHABET[] = " !*+,-./0"
 static constexpr Point CHAR_SIZE = {9, 8};
 
 Assets::Assets(Renderer& renderer)
-        : mBaseDir("images")
+        : mBaseDir("assets")
         , textTexture(load(renderer, "font"))
         , player(loadMasked(renderer, "player"))
         , playerDown(loadMasked(renderer, "player-down"))
