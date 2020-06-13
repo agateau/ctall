@@ -92,7 +92,8 @@ void Background::update() {
 
     ColumnIterator columnIt(mSections);
     columnIt += mColumnIndex + mMinColumnCount - 1;
-    Point pos(int((mMinColumnCount - 1) * TILE_SIZE), mWorld.yForLane(-Section::BORDER_HEIGHT));
+    Point pos(int((mMinColumnCount - 1) * TILE_SIZE) + mOffset,
+              mWorld.yForLane(-Section::BORDER_HEIGHT));
     for (auto triggerId : columnIt->triggers) {
         if (triggerId != TriggerId::None) {
             mTriggers.at(triggerId)->exec(mWorld, pos);
