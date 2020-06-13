@@ -14,7 +14,7 @@ using namespace SDL2pp;
 GameScreen::GameScreen(CtallApp& app)
         : mApp(app)
         , mAssets(app.assets())
-        , mWorld(app.assets(), mInput, mApp.screenSize())
+        , mWorld(app.assets(), mInput, mApp.screenSize(), mApp.skaterIdx())
         , mGameOverMenu(mAssets.textDrawer)
         , mPauseMenu(mAssets.textDrawer) {
     mGameOverMenu.addItem("RESTART", [&app] { app.showGameScreen(); });

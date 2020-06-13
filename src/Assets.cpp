@@ -43,7 +43,7 @@ Assets::Assets(Renderer& renderer)
 }
 
 void Assets::loadPlayerTextures(Renderer& renderer) {
-    for (int idx = 0; idx < 2; ++idx) {
+    for (int idx = 0; idx < AVAILABLE_SKATER_COUNT; ++idx) {
         loadPlayerTexture(renderer, idx);
     }
 }

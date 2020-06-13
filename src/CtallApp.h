@@ -15,8 +15,14 @@ public:
     void showStartScreen();
     void showGameScreen();
 
+    int skaterIdx() const {
+        return mPlayerIdx;
+    }
+    void setSkaterIdx(int value);
+
 private:
     Assets mAssets;
+    int mPlayerIdx = 0;
 };
 
 #endif // CTALLAPP_H

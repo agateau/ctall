@@ -14,6 +14,8 @@ public:
     void draw(SDL2pp::Renderer& renderer) override;
 
 private:
+    std::string generateSkaterItem() const;
+    void selectNextSkater();
     CtallApp& mApp;
     Assets& mAssets;
     Menu mMenu;

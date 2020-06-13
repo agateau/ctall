@@ -12,6 +12,8 @@
 #include <memory>
 #include <unordered_map>
 
+static constexpr int AVAILABLE_SKATER_COUNT = 2;
+
 struct Assets {
 private:
     std::string mBaseDir;
@@ -21,6 +23,9 @@ public:
     Assets(SDL2pp::Renderer& renderer);
 
     std::vector<PlayerTextures> players;
+    std::array<std::string, AVAILABLE_SKATER_COUNT> skaterNames = {
+        "BOB", "DINA"
+    };
     MaskedTexture wall;
     std::vector<MaskedTexture> bonuses;
     TextDrawer textDrawer;

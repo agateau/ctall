@@ -31,6 +31,10 @@ void Menu::addItem(const std::string& text, Menu::Callback callback) {
     mItems.push_back({text, callback});
 }
 
+void Menu::setItemText(int idx, const std::string& text) {
+    mItems.at(idx).text = text;
+}
+
 void Menu::draw(SDL2pp::Renderer& renderer, const SDL2pp::Point& pos) {
     int y = pos.y;
     int centerX = pos.x;

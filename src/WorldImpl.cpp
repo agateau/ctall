@@ -51,14 +51,17 @@ private:
     mutable Pool<Bonus> mPool;
 };
 
-WorldImpl::WorldImpl(Assets& assets, const Input& input, const SDL2pp::Point& screenSize)
+WorldImpl::WorldImpl(Assets& assets,
+                     const Input& input,
+                     const SDL2pp::Point& screenSize,
+                     int playerIdx)
         : mScreenSize(screenSize)
         , mWallTrigger(make_unique<WallTrigger>(assets, mScroller))
         , mBonusTrigger(make_unique<BonusTrigger>(assets, mScroller))
         , mTriggers(
               {{TriggerId::Wall, mWallTrigger.get()}, {TriggerId::Bonus, mBonusTrigger.get()}})
         , mBackground(*this, mScroller, *this, mTriggers, mScreenSize)
-        , mPlayer(*this, assets.players.at(0), input)
+        , mPlayer(*this, assets.players.at(playerIdx), input)
         , mAssets(assets) {
     mGameObjects.push_back(&mPlayer);
 

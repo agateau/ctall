@@ -15,3 +15,7 @@ void CtallApp::showStartScreen() {
 void CtallApp::showGameScreen() {
     setScreen(std::make_unique<GameScreen>(*this));
 }
+
+void CtallApp::setSkaterIdx(int value) {
+    mPlayerIdx = value;
+}

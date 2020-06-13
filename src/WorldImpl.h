@@ -20,7 +20,7 @@ class WorldImpl : public World, public Background::SectionProvider {
 public:
     enum class State { Running, Paused, GameOver };
 
-    WorldImpl(Assets& assets, const Input& input, const SDL2pp::Point& screenSize);
+    WorldImpl(Assets& assets, const Input& input, const SDL2pp::Point& screenSize, int playerIdx);
     ~WorldImpl();
 
     void update(float delta);

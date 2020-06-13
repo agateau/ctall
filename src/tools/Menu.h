@@ -24,6 +24,8 @@ public:
 
     void addItem(const std::string& text, Callback callback);
 
+    void setItemText(int idx, const std::string& text);
+
     void draw(SDL2pp::Renderer& renderer, const SDL2pp::Point& pos);
 
 private:
