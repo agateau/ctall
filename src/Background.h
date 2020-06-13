@@ -21,12 +21,12 @@ class Background {
 public:
     class SectionProvider {
     public:
-        virtual const Section* getSection() const = 0;
+        virtual const Section* getSection() = 0;
     };
 
     Background(World& world,
                const Scroller& scroller,
-               const SectionProvider& sectionProvider,
+               SectionProvider& sectionProvider,
                const TriggerMap& triggers,
                const SDL2pp::Point& screenSize);
 
@@ -41,7 +41,7 @@ private:
 
     World& mWorld;
     const Scroller& mScroller;
-    const SectionProvider& mSectionProvider;
+    SectionProvider& mSectionProvider;
     const TriggerMap& mTriggers;
     SectionList mSections;
     int mOffset = 0;

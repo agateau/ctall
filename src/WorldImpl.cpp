@@ -61,6 +61,16 @@ WorldImpl::WorldImpl(Assets& assets, const Input& input, const SDL2pp::Point& sc
         , mPlayer(*this, assets.player, assets.playerUp, assets.playerDown, input)
         , mAssets(assets) {
     mGameObjects.push_back(&mPlayer);
+
+    mStartSections = {
+        mAssets.sectionsByName.at("start"),
+        mAssets.sectionsByName.at("futuristic-1"),
+        mAssets.sectionsByName.at("futuristic-2"),
+        mAssets.sectionsByName.at("blm"),
+        mAssets.sectionsByName.at("futuristic-2"),
+        mAssets.sectionsByName.at("futuristic-1"),
+        mAssets.sectionsByName.at("futuristic-2"),
+    };
 }
 
 WorldImpl::~WorldImpl() = default;
@@ -114,6 +124,10 @@ void WorldImpl::addGameObject(GameObject* gameObject) {
     mGameObjects.push_back(gameObject);
 }
 
-const Section* WorldImpl::getSection() const {
-    return &randomChoice(mAssets.sections);
+const Section* WorldImpl::getSection() {
+    if (mStartSectionIdx < mStartSections.size()) {
+        return mStartSections.at(mStartSectionIdx++);
+    } else {
+        return randomChoice(mAssets.sections).get();
+    }
 }

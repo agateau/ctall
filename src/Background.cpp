@@ -62,7 +62,7 @@ private:
 
 Background::Background(World& world,
                        const Scroller& scroller,
-                       const SectionProvider& sectionProvider,
+                       SectionProvider& sectionProvider,
                        const TriggerMap& triggers,
                        const SDL2pp::Point& screenSize)
         : mMinColumnCount(size_t(ceil(double(screenSize.x) / TILE_SIZE)) + 2)

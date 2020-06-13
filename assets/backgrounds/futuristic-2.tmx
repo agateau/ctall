@@ -46,7 +46,7 @@
   <object id="5" type="Wall" x="103" y="126">
    <point/>
   </object>
-  <object id="6" type="Bonus" x="280.698" y="120.682">
+  <object id="6" type="Bonus" x="232.084" y="103.303">
    <point/>
   </object>
   <object id="7" type="Wall" x="104" y="88">

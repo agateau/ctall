@@ -49,7 +49,7 @@ public:
     void switchToGameOverState() override;
 
     // Background::SectionProvider
-    const Section* getSection() const override;
+    const Section* getSection() override;
 
 private:
     const SDL2pp::Point& mScreenSize;
@@ -60,9 +60,13 @@ private:
     Background mBackground;
     Player mPlayer;
     Assets& mAssets;
+    std::vector<const Section*> mStartSections;
+
     std::vector<GameObject*> mGameObjects;
 
     State mState = State::Running;
+
+    std::size_t mStartSectionIdx = 0;
 };
 
 #endif // WORLDIMPL_H
