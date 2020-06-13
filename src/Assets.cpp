@@ -34,9 +34,9 @@ static constexpr Point CHAR_SIZE = {9, 8};
 Assets::Assets(Renderer& renderer)
         : mBaseDir(ASSETS_DIR)
         , textTexture(load(renderer, "font"))
-        , player(loadMasked(renderer, "player"))
-        , playerDown(loadMasked(renderer, "player-down"))
-        , playerUp(loadMasked(renderer, "player-up"))
+        , player(loadMasked(renderer, "player-1"))
+        , playerDown(loadMasked(renderer, "player-down-1"))
+        , playerUp(loadMasked(renderer, "player-up-1"))
         , wall(loadMasked(renderer, "wall"))
         , bonuses(loadAllMasked(renderer, "bonus"))
         , textDrawer(textTexture, ALPHABET, CHAR_SIZE) {
