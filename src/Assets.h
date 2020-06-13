@@ -20,7 +20,7 @@ private:
 public:
     Assets(SDL2pp::Renderer& renderer);
 
-    PlayerTextures player;
+    std::vector<PlayerTextures> players;
     MaskedTexture wall;
     std::vector<MaskedTexture> bonuses;
     TextDrawer textDrawer;
@@ -42,6 +42,9 @@ private:
     MaskedTexture loadMasked(SDL2pp::Renderer& renderer, const std::string& name);
     std::vector<MaskedTexture> loadAllMasked(SDL2pp::Renderer& renderer,
                                              const std::string& dirName);
+
+    void loadPlayerTextures(SDL2pp::Renderer& renderer);
+    void loadPlayerTexture(SDL2pp::Renderer& renderer, int idx);
 };
 
 #endif // ASSETS_H

@@ -34,14 +34,25 @@ static constexpr Point CHAR_SIZE = {9, 8};
 Assets::Assets(Renderer& renderer)
         : mBaseDir(ASSETS_DIR)
         , textTexture(load(renderer, "font"))
-        , player({loadMasked(renderer, "player-1"),
-                  loadMasked(renderer, "player-up-1"),
-                  loadMasked(renderer, "player-down-1")})
         , wall(loadMasked(renderer, "wall"))
         , bonuses(loadAllMasked(renderer, "bonus"))
         , textDrawer(textTexture, ALPHABET, CHAR_SIZE) {
+    loadPlayerTextures(renderer);
     loadTileSets(renderer);
     loadSections(renderer);
+}
+
+void Assets::loadPlayerTextures(Renderer& renderer) {
+    for (int idx = 0; idx < 2; ++idx) {
+        loadPlayerTexture(renderer, idx);
+    }
+}
+
+void Assets::loadPlayerTexture(Renderer& renderer, int idx) {
+    auto strIdx = to_string(idx);
+    players.emplace_back(PlayerTextures{loadMasked(renderer, "player-" + strIdx),
+                                        loadMasked(renderer, "player-up-" + strIdx),
+                                        loadMasked(renderer, "player-down-" + strIdx)});
 }
 
 void Assets::loadTileSets(Renderer& renderer) {

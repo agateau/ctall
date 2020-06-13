@@ -58,7 +58,7 @@ WorldImpl::WorldImpl(Assets& assets, const Input& input, const SDL2pp::Point& sc
         , mTriggers(
               {{TriggerId::Wall, mWallTrigger.get()}, {TriggerId::Bonus, mBonusTrigger.get()}})
         , mBackground(*this, mScroller, *this, mTriggers, mScreenSize)
-        , mPlayer(*this, assets.player, input)
+        , mPlayer(*this, assets.players.at(0), input)
         , mAssets(assets) {
     mGameObjects.push_back(&mPlayer);
 
