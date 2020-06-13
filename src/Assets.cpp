@@ -59,7 +59,6 @@ void Assets::loadTileSets(Renderer& renderer) {
         }
         loadTileSet(renderer, tileImagePath, 0);
     }
-    loadTileSet(renderer, backgroundsDir / "roguelike-city-transparent.png", 2);
 }
 
 const TileSet& Assets::loadTileSet(Renderer& renderer, const string& path, int spacing) {
