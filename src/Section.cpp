@@ -13,6 +13,7 @@ TileSet::TileSet(unique_ptr<Texture> tileImage, int spacing) : mTileImage(move(t
             mTiles.emplace_back(Tile{*mTileImage.get(), {x, y}});
         }
     }
+    cout << "tile count: " << mTiles.size() << '\n';
 }
 
 const Tile& TileSet::tile(size_t tileId) const {

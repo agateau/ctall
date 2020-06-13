@@ -45,7 +45,7 @@ private:
 };
 
 struct Section {
-    static constexpr int BORDER_HEIGHT = 2;
+    static constexpr int BORDER_HEIGHT = 3;
     static constexpr int TOTAL_HEIGHT = LANE_COUNT + 2 * BORDER_HEIGHT;
     static constexpr int IMAGE_LAYERS = 2;
 

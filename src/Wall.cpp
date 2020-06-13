@@ -12,6 +12,8 @@
 
 using namespace SDL2pp;
 
+static constexpr int SHADOW_OFFSET = 6;
+
 Wall::Wall(Pool<Wall>& pool, const Scroller& scroller, MaskedTexture& texture)
         : GameObject(Category::Bad)
         , mPool(pool)
@@ -23,7 +25,7 @@ Wall::Wall(Pool<Wall>& pool, const Scroller& scroller, MaskedTexture& texture)
 
 void Wall::setup(const SDL2pp::Point& pos) {
     mRect.x = pos.x;
-    mRect.y = pos.y + TILE_SIZE - mRect.h;
+    mRect.y = pos.y + TILE_SIZE - mRect.h + SHADOW_OFFSET;
     mScrollComponent.setup();
     setActive(true);
 }
