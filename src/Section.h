@@ -57,6 +57,9 @@ struct Section {
         ColumnArray<TriggerId> triggers;
     };
     std::vector<Column> columns;
+
+    Section() = default;
+    Section(const Section&) = delete;
 };
 
 #endif // SECTION_H

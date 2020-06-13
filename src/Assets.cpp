@@ -65,8 +65,8 @@ const TileSet& Assets::loadTileSet(Renderer& renderer, const string& path, int s
     return it->second;
 }
 
-Section Assets::loadSection(SDL2pp::Renderer& renderer, const string& tmxPath) {
-    Section section;
+unique_ptr<Section> Assets::loadSection(SDL2pp::Renderer& renderer, const string& tmxPath) {
+    auto section = make_unique<Section>();
 
     assert(fs::is_regular_file(tmxPath));
     tmx::Map map;
@@ -80,7 +80,7 @@ Section Assets::loadSection(SDL2pp::Renderer& renderer, const string& tmxPath) {
 
     auto mapTileCount = map.getTileCount();
     assert(mapTileCount.y == Section::TOTAL_HEIGHT);
-    section.columns.resize(mapTileCount.x);
+    section->columns.resize(mapTileCount.x);
 
     const auto& layers = map.getLayers();
     assert(layers.size() == Section::IMAGE_LAYERS + 1);
@@ -92,7 +92,7 @@ Section Assets::loadSection(SDL2pp::Renderer& renderer, const string& tmxPath) {
         const auto& tileLayer = layer->getLayerAs<tmx::TileLayer>();
 
         for (size_t columnIdx = 0; columnIdx < mapTileCount.x; ++columnIdx) {
-            auto& column = section.columns.at(columnIdx);
+            auto& column = section->columns.at(columnIdx);
             for (size_t rowIdx = 0; rowIdx < mapTileCount.y; ++rowIdx) {
                 size_t tileIdx = rowIdx * mapTileCount.x + columnIdx;
                 auto tmxTile = tileLayer.getTiles().at(tileIdx);
@@ -122,7 +122,7 @@ Section Assets::loadSection(SDL2pp::Renderer& renderer, const string& tmxPath) {
         }
         size_t columnIdx = size_t(object.getPosition().x / TILE_SIZE);
         size_t rowIdx = size_t(object.getPosition().y / TILE_SIZE);
-        section.columns.at(columnIdx).triggers[rowIdx] = triggerId;
+        section->columns.at(columnIdx).triggers[rowIdx] = triggerId;
     }
 
     return section;
@@ -132,7 +132,8 @@ void Assets::loadSections(SDL2pp::Renderer& renderer) {
     auto dirPath = mBaseDir + "/backgrounds";
     for (const fs::directory_entry& entry : fs::directory_iterator(dirPath)) {
         if (entry.path().extension() == ".tmx") {
-            sections.emplace_back(loadSection(renderer, entry.path()));
+            sections.push_back(loadSection(renderer, entry.path()));
+            sectionsByName[entry.path().stem()] = sections.back().get();
         }
     }
 }

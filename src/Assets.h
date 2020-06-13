@@ -25,7 +25,9 @@ public:
     MaskedTexture wall;
     std::vector<MaskedTexture> bonuses;
     TextDrawer textDrawer;
-    std::vector<Section> sections;
+    std::vector<std::unique_ptr<Section>> sections;
+
+    std::unordered_map<std::string, const Section*> sectionsByName;
 
 private:
     void loadTileSets(SDL2pp::Renderer& renderer);
@@ -33,7 +35,7 @@ private:
 
     void loadSections(SDL2pp::Renderer& renderer);
 
-    Section loadSection(SDL2pp::Renderer& renderer, const std::string& tmxPath);
+    std::unique_ptr<Section> loadSection(SDL2pp::Renderer& renderer, const std::string& tmxPath);
 
     std::unordered_map<std::string, TileSet> mTileSets;
 
