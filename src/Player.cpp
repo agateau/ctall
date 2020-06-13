@@ -19,17 +19,13 @@ static constexpr int OFFSET_UP = 15;
 static constexpr int OFFSET_DOWN = 20;
 
 Player::Player(World& world,
-               MaskedTexture& texture,
-               MaskedTexture& upTexture,
-               MaskedTexture& downTexture,
+               const PlayerTextures& textures,
                const Input& input)
         : GameObject(Category::Player)
         , mWorld(world)
-        , mTexture(texture)
-        , mUpTexture(upTexture)
-        , mDownTexture(downTexture)
+        , mTextures(textures)
         , mInput(input) {
-    setActiveTexture(&mTexture);
+    setActiveTexture(&mTextures.normal);
     mRect.x = 12;
     mRect.y = mWorld.yForLane(0) + (TILE_SIZE - mRect.h) / 2;
 }
@@ -41,7 +37,7 @@ void Player::update(float delta) {
 }
 
 void Player::draw(Renderer& renderer) {
-    renderer.Copy(mActiveTexture->texture, NullOpt, mRect);
+    renderer.Copy(const_cast<Texture&>(mActiveTexture->texture), NullOpt, mRect);
 }
 
 void Player::updateY(float delta) {
@@ -57,11 +53,11 @@ void Player::updateY(float delta) {
 
 void Player::updateTexture() {
     if (mInput.down) {
-        setActiveTexture(&mDownTexture);
+        setActiveTexture(&mTextures.down);
     } else if (mInput.up) {
-        setActiveTexture(&mUpTexture);
+        setActiveTexture(&mTextures.up);
     } else {
-        setActiveTexture(&mTexture);
+        setActiveTexture(&mTextures.normal);
     }
 }
 
@@ -86,7 +82,7 @@ void Player::checkCollisions() {
     }
 }
 
-void Player::setActiveTexture(MaskedTexture* texture) {
+void Player::setActiveTexture(const MaskedTexture* texture) {
     if (mActiveTexture == texture) {
         return;
     }

@@ -4,6 +4,7 @@
 #include <SDL2pp/SDL2pp.hh>
 
 #include "MaskedTexture.h"
+#include "Player.h"
 #include "Section.h"
 #include "TextDrawer.h"
 
@@ -19,9 +20,7 @@ private:
 public:
     Assets(SDL2pp::Renderer& renderer);
 
-    MaskedTexture player;
-    MaskedTexture playerDown;
-    MaskedTexture playerUp;
+    PlayerTextures player;
     MaskedTexture wall;
     std::vector<MaskedTexture> bonuses;
     TextDrawer textDrawer;

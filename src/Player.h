@@ -4,18 +4,20 @@
 #include <SDL2pp/SDL2pp.hh>
 
 #include "GameObject.h"
+#include "MaskedTexture.h"
 
 struct Input;
 class World;
-class MaskedTexture;
+
+struct PlayerTextures {
+    MaskedTexture normal;
+    MaskedTexture up;
+    MaskedTexture down;
+};
 
 class Player : public GameObject {
 public:
-    Player(World& world,
-           MaskedTexture& texture,
-           MaskedTexture& upTexture,
-           MaskedTexture& downTexture,
-           const Input& input);
+    Player(World& world, const PlayerTextures& textures, const Input& input);
 
     void update(float delta) override;
 
@@ -30,13 +32,11 @@ private:
     void updateY(float delta);
     void updateTexture();
     void checkCollisions();
-    void setActiveTexture(MaskedTexture* texture);
+    void setActiveTexture(const MaskedTexture* texture);
 
     World& mWorld;
-    MaskedTexture& mTexture;
-    MaskedTexture& mUpTexture;
-    MaskedTexture& mDownTexture;
-    MaskedTexture* mActiveTexture;
+    const PlayerTextures& mTextures;
+    const MaskedTexture* mActiveTexture;
     const Input& mInput;
     int mCapturedCount = 0;
 };
