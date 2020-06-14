@@ -1,10 +1,6 @@
 #ifndef CONSTANTS_H
 #define CONSTANTS_H
 
-static constexpr int SCREEN_WIDTH = 360;
-static constexpr int SCREEN_HEIGHT = 240;
-static constexpr int SCREEN_SCALE = 4;
-
 static constexpr int LANE_COUNT = 5;
 static constexpr int TILE_SIZE = 16;
 
