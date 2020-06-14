@@ -1,0 +1,39 @@
+#!/usr/bin/env python3
+"""
+Extract layers of a .ora file as png files.
+"""
+import argparse
+import sys
+
+from pyora import Project
+
+
+def parse_destination_files(destination_files):
+    for dest in destination_files:
+        yield dest.split('=', 1)
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.description = __doc__
+
+    parser.add_argument("ora_file")
+    parser.add_argument("layer2png", nargs="+",
+                        help="format: layer_name=path/to/png/file")
+
+    args = parser.parse_args()
+
+    dst_files_for_layers = parse_destination_files(args.layer2png)
+
+    for layer_path, png_path in dst_files_for_layers:
+        print(f"Extracting layer {layer_path} to {png_path}")
+        png_data = Project.extract_layer(args.ora_file, path=layer_path)
+        with open(png_path, "wb") as f:
+            f.write(png_data)
+
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
+# vi: ts=4 sw=4 et
