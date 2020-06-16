@@ -28,6 +28,11 @@ public:
     }
 
 private:
+    void loopStep(float delta);
+
+    void vsyncRun();
+    void noVsyncRun();
+
     SDL2pp::Point mScreenSize;
     const int mScale;
     SDL2pp::Window mWindow;
